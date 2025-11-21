@@ -2,6 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .container {
@@ -16,6 +17,14 @@
   color: white;
   padding: 1rem 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 60px;
+  display: flex;
+  align-items: center;
 }
 
 .header .container {
@@ -110,6 +119,12 @@
 .main {
   flex: 1;
   padding: 2rem 0;
+  margin-top: 60px; /* Высота header */
+  margin-bottom: 50px; /* Высота footer */
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 110px); /* 100vh минус высота header и footer */
+  -webkit-overflow-scrolling: touch;
 }
 
 .footer {
@@ -117,6 +132,14 @@
   color: white;
   padding: 1rem 0;
   text-align: center;
-  margin-top: auto;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 

@@ -75,9 +75,11 @@ export interface Subscription {
 }
 
 export interface SubscriptionPrice {
-  id: number
+  id?: number
   period_months: number
-  price_kopecks: number
+  price_kopecks?: number
+  price_rub?: number
+  period_text?: string
   created_at?: string | null
 }
 

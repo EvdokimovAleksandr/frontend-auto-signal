@@ -98,31 +98,59 @@ const AdminPage = () => {
 
       {activeTab === 'stats' && stats && (
         <div className="stats-section">
-          <h2>Статистика системы</h2>
-          <div className="stats-grid">
-            <div className="stat-card">
-              <h3>Всего пользователей</h3>
-              <p className="stat-number">{stats.total_users}</p>
+          {/* Пользователи */}
+          <div className="stats-group">
+            <h3 className="stats-group-title">👥 Пользователи</h3>
+            <div className="stats-grid">
+              <div className="stat-card stat-card-primary">
+                <div className="stat-icon">👤</div>
+                <div className="stat-content">
+                  <p className="stat-label">Всего пользователей</p>
+                  <p className="stat-number">{stats.total_users}</p>
+                </div>
+              </div>
+              <div className="stat-card stat-card-success">
+                <div className="stat-icon">💎</div>
+                <div className="stat-content">
+                  <p className="stat-label">Премиум пользователей</p>
+                  <p className="stat-number">{stats.premium_users}</p>
+                </div>
+              </div>
+              <div className="stat-card stat-card-info">
+                <div className="stat-icon">👋</div>
+                <div className="stat-content">
+                  <p className="stat-label">Обычных пользователей</p>
+                  <p className="stat-number">{stats.regular_users}</p>
+                </div>
+              </div>
             </div>
-            <div className="stat-card">
-              <h3>Премиум пользователей</h3>
-              <p className="stat-number">{stats.premium_users}</p>
-            </div>
-            <div className="stat-card">
-              <h3>Обычных пользователей</h3>
-              <p className="stat-number">{stats.regular_users}</p>
-            </div>
-            <div className="stat-card">
-              <h3>Марок</h3>
-              <p className="stat-number">{stats.brands_count}</p>
-            </div>
-            <div className="stat-card">
-              <h3>Моделей</h3>
-              <p className="stat-number">{stats.models_count}</p>
-            </div>
-            <div className="stat-card">
-              <h3>Годов</h3>
-              <p className="stat-number">{stats.years_count}</p>
+          </div>
+
+          {/* Автомобили */}
+          <div className="stats-group">
+            <h3 className="stats-group-title">🚗 Автомобили</h3>
+            <div className="stats-grid">
+              <div className="stat-card stat-card-warning">
+                <div className="stat-icon">🏭</div>
+                <div className="stat-content">
+                  <p className="stat-label">Марок</p>
+                  <p className="stat-number">{stats.brands_count}</p>
+                </div>
+              </div>
+              <div className="stat-card stat-card-danger">
+                <div className="stat-icon">🚙</div>
+                <div className="stat-content">
+                  <p className="stat-label">Моделей</p>
+                  <p className="stat-number">{stats.models_count}</p>
+                </div>
+              </div>
+              <div className="stat-card stat-card-secondary">
+                <div className="stat-icon">📅</div>
+                <div className="stat-content">
+                  <p className="stat-label">Годов выпуска</p>
+                  <p className="stat-number">{stats.years_count}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -200,55 +228,63 @@ const AdminPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {prices.map((price) => (
-                    <tr key={price.period_months}>
-                      <td>{price.period_months}</td>
-                      <td>
-                        {editingPrice?.periodMonths === price.period_months ? (
-                          <input
-                            type="number"
-                            value={editingPrice.priceKopecks}
-                            onChange={(e) => setEditingPrice({
-                              ...editingPrice,
-                              priceKopecks: parseInt(e.target.value) || 0
-                            })}
-                            min="0"
-                          />
-                        ) : (
-                          price.price_kopecks
-                        )}
-                      </td>
-                      <td>{(price.price_kopecks / 100).toFixed(2)} ₽</td>
-                      <td>
-                        {editingPrice?.periodMonths === price.period_months ? (
-                          <>
+                  {prices.map((price) => {
+                    // Обрабатываем данные: бэкенд может вернуть price_rub или price_kopecks
+                    const priceKopecks = price.price_kopecks || (price.price_rub ? Math.round(price.price_rub * 100) : 0);
+                    const priceRub = price.price_rub || (price.price_kopecks ? price.price_kopecks / 100 : 0);
+                    
+                    return (
+                      <tr key={price.period_months}>
+                        <td>{price.period_months}</td>
+                        <td>
+                          {editingPrice?.periodMonths === price.period_months ? (
+                            <input
+                              type="number"
+                              value={editingPrice.priceKopecks}
+                              onChange={(e) => setEditingPrice({
+                                ...editingPrice,
+                                priceKopecks: parseInt(e.target.value) || 0
+                              })}
+                              min="0"
+                            />
+                          ) : (
+                            priceKopecks || '-'
+                          )}
+                        </td>
+                        <td>
+                          {priceKopecks > 0 ? `${priceRub.toFixed(2)} ₽` : '-'}
+                        </td>
+                        <td>
+                          {editingPrice?.periodMonths === price.period_months ? (
+                            <>
+                              <button
+                                onClick={() => handleUpdatePrice(price.period_months, editingPrice.priceKopecks)}
+                                className="btn-save"
+                              >
+                                ✅ Сохранить
+                              </button>
+                              <button
+                                onClick={() => setEditingPrice(null)}
+                                className="btn-cancel"
+                              >
+                                ❌ Отмена
+                              </button>
+                            </>
+                          ) : (
                             <button
-                              onClick={() => handleUpdatePrice(price.period_months, editingPrice.priceKopecks)}
-                              className="btn-save"
+                              onClick={() => setEditingPrice({
+                                periodMonths: price.period_months,
+                                priceKopecks: priceKopecks
+                              })}
+                              className="btn-edit"
                             >
-                              ✅ Сохранить
+                              ✏️ Редактировать
                             </button>
-                            <button
-                              onClick={() => setEditingPrice(null)}
-                              className="btn-cancel"
-                            >
-                              ❌ Отмена
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            onClick={() => setEditingPrice({
-                              periodMonths: price.period_months,
-                              priceKopecks: price.price_kopecks
-                            })}
-                            className="btn-edit"
-                          >
-                            ✏️ Редактировать
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
