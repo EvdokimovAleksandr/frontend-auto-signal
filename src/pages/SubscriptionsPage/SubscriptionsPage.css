@@ -1,0 +1,31 @@
+.subscriptions-page h1 {
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.prices-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.price-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.price-card h3 {
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #27ae60;
+}
+
+

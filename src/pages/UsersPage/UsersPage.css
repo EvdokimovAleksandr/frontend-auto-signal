@@ -1,0 +1,35 @@
+.users-page h1 {
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.users-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.user-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-card h3 {
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.user-card p {
+  color: #7f8c8d;
+  margin: 0.25rem 0;
+}
+
+.pagination {
+  text-align: center;
+  color: #7f8c8d;
+}
+
+
