@@ -9,6 +9,10 @@ import UsersPage from './pages/UsersPage/UsersPage'
 import SubscriptionsPage from './pages/SubscriptionsPage/SubscriptionsPage'
 import AdminPage from './pages/AdminPage/AdminPage'
 import LoginPage from './pages/LoginPage/LoginPage'
+import HelpPage from './pages/HelpPage/HelpPage'
+import ManageCarsPage from './pages/ManageCarsPage/ManageCarsPage'
+import ManageFilesPage from './pages/ManageFilesPage/ManageFilesPage'
+import ManageDescriptionsPage from './pages/ManageDescriptionsPage/ManageDescriptionsPage'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -29,6 +33,10 @@ function App() {
         <Route path="/users" element={<UsersPage />} />
         <Route path="/subscriptions" element={<SubscriptionsPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/manage-cars" element={<ManageCarsPage />} />
+        <Route path="/admin/manage-files" element={<ManageFilesPage />} />
+        <Route path="/admin/manage-descriptions" element={<ManageDescriptionsPage />} />
+        <Route path="/help" element={<HelpPage />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
     </Layout>

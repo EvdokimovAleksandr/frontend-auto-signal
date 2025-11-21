@@ -31,8 +31,29 @@ export const API_ENDPOINTS = {
   
   // Admin
   ADMIN_STATS: '/admin/stats',
+  ADMIN_STATS_DETAILED: '/admin/stats/detailed',
+  ADMIN_STATS_TOP_MODELS: '/admin/stats/top-models',
   ADMIN_ADMINS: '/admin/admins',
   ADMIN_PRICES: '/admin/prices',
+  ADMIN_SETTINGS: '/admin/settings',
+  ADMIN_SETTINGS_START_MESSAGE: '/admin/settings/start-message',
+  ADMIN_DESCRIPTIONS: '/admin/descriptions',
+  
+  // Files (admin)
+  FILES_DESCRIPTION_BRANDS: '/files/description-brands',
+  FILES_DESCRIPTION_BRANDS_MODELS: (brandId: number) => `/files/description-brands/${brandId}/models`,
+  FILES_DESCRIPTION_MODELS_YEARS: (modelId: number) => `/files/description-models/${modelId}/years`,
+  FILES_DESCRIPTION_YEARS_FILES: (yearId: number) => `/files/description-years/${yearId}/files`,
+  FILES_FILE_DESCRIPTION: (fileId: number) => `/files/files/${fileId}/description`,
+  FILES_ADD_PHOTO: '/files/photos',
+  FILES_DELETE_PHOTO: (fileId: number) => `/files/photos/${fileId}`,
+  FILES_ADD_PREMIUM_PHOTO: '/files/photos/premium',
+  FILES_DELETE_PREMIUM_PHOTO: (fileId: number) => `/files/photos/premium/${fileId}`,
+  FILES_ADD_PDF: '/files/pdfs',
+  FILES_DELETE_PDF: (fileId: number) => `/files/pdfs/${fileId}`,
+  FILES_ADD_PREMIUM_PDF: '/files/pdfs/premium',
+  FILES_DELETE_PREMIUM_PDF: (fileId: number) => `/files/pdfs/premium/${fileId}`,
+  FILES_PREVIEW: (yearId: number, fileType: string) => `/files/years/${yearId}/files/${fileType}/preview`,
   
   // Info
   HELP: '/info/help',

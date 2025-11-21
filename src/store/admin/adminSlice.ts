@@ -1,18 +1,24 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { AdminStats, AdminUser, SubscriptionPrice } from '../../types'
+import type { AdminStats, AdminUser, SubscriptionPrice, TopModel, BotSetting } from '../../types'
 
 interface AdminState {
   stats: AdminStats | null
+  detailedStats: AdminStats | null
+  topModels: TopModel[]
   admins: AdminUser[]
   prices: SubscriptionPrice[]
+  settings: BotSetting[]
   loading: boolean
   error: string | null
 }
 
 const initialState: AdminState = {
   stats: null,
+  detailedStats: null,
+  topModels: [],
   admins: [],
   prices: [],
+  settings: [],
   loading: false,
   error: null,
 }
@@ -63,6 +69,69 @@ const adminSlice = createSlice({
       state.error = action.payload
     },
 
+    // Get detailed stats
+    getDetailedStatsRequest: (state) => {
+      state.loading = true
+      state.error = null
+    },
+    getDetailedStatsSuccess: (state, action: PayloadAction<AdminStats>) => {
+      state.loading = false
+      state.detailedStats = action.payload
+    },
+    getDetailedStatsFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false
+      state.error = action.payload
+    },
+
+    // Get top models
+    getTopModelsRequest: (state) => {
+      state.loading = true
+      state.error = null
+    },
+    getTopModelsSuccess: (state, action: PayloadAction<TopModel[]>) => {
+      state.loading = false
+      state.topModels = action.payload
+    },
+    getTopModelsFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false
+      state.error = action.payload
+    },
+
+    // Get settings
+    getSettingsRequest: (state) => {
+      state.loading = true
+      state.error = null
+    },
+    getSettingsSuccess: (state, action: PayloadAction<BotSetting[]>) => {
+      state.loading = false
+      state.settings = action.payload
+    },
+    getSettingsFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false
+      state.error = action.payload
+    },
+
+    // Update start message
+    updateStartMessageRequest: (state, action: PayloadAction<string>) => {
+      state.loading = true
+      state.error = null
+    },
+    updateStartMessageSuccess: (state, action: PayloadAction<BotSetting>) => {
+      state.loading = false
+      const index = state.settings.findIndex(
+        (s) => s.setting_key === action.payload.setting_key
+      )
+      if (index >= 0) {
+        state.settings[index] = action.payload
+      } else {
+        state.settings.push(action.payload)
+      }
+    },
+    updateStartMessageFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false
+      state.error = action.payload
+    },
+
     clearError: (state) => {
       state.error = null
     },
@@ -79,6 +148,18 @@ export const {
   getPricesRequest,
   getPricesSuccess,
   getPricesFailure,
+  getDetailedStatsRequest,
+  getDetailedStatsSuccess,
+  getDetailedStatsFailure,
+  getTopModelsRequest,
+  getTopModelsSuccess,
+  getTopModelsFailure,
+  getSettingsRequest,
+  getSettingsSuccess,
+  getSettingsFailure,
+  updateStartMessageRequest,
+  updateStartMessageSuccess,
+  updateStartMessageFailure,
   clearError,
 } = adminSlice.actions
 

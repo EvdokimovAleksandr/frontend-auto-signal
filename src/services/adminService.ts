@@ -1,11 +1,23 @@
 import apiClient from './api'
 import { API_ENDPOINTS } from '../config/api'
-import type { AdminStats, AdminUser, SubscriptionPrice } from '../types'
+import type { AdminStats, AdminUser, SubscriptionPrice, TopModel, BotSetting } from '../types'
 
 export const adminService = {
   // Получить статистику
   getStats: async (): Promise<AdminStats> => {
     const response = await apiClient.get<AdminStats>(API_ENDPOINTS.ADMIN_STATS)
+    return response.data
+  },
+
+  // Получить детальную статистику
+  getDetailedStats: async (): Promise<AdminStats> => {
+    const response = await apiClient.get<AdminStats>(API_ENDPOINTS.ADMIN_STATS_DETAILED)
+    return response.data
+  },
+
+  // Получить топ-20 моделей
+  getTopModels: async (): Promise<TopModel[]> => {
+    const response = await apiClient.get<TopModel[]>(API_ENDPOINTS.ADMIN_STATS_TOP_MODELS)
     return response.data
   },
 
@@ -46,6 +58,20 @@ export const adminService = {
       ...response.data,
       price_kopecks: priceKopecks,
     }
+  },
+
+  // Получить настройки бота
+  getSettings: async (): Promise<BotSetting[]> => {
+    const response = await apiClient.get<BotSetting[]>(API_ENDPOINTS.ADMIN_SETTINGS)
+    return response.data
+  },
+
+  // Обновить стартовое сообщение
+  updateStartMessage: async (message: string): Promise<BotSetting> => {
+    const response = await apiClient.put<BotSetting>(API_ENDPOINTS.ADMIN_SETTINGS_START_MESSAGE, {
+      message,
+    })
+    return response.data
   },
 }
 

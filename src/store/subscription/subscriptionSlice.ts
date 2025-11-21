@@ -61,6 +61,20 @@ const subscriptionSlice = createSlice({
       state.error = action.payload
     },
 
+    // Delete subscription
+    deleteSubscriptionRequest: (state, action: PayloadAction<string>) => {
+      state.loading = true
+      state.error = null
+    },
+    deleteSubscriptionSuccess: (state) => {
+      state.loading = false
+      state.userSubscription = null
+    },
+    deleteSubscriptionFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false
+      state.error = action.payload
+    },
+
     clearError: (state) => {
       state.error = null
     },
@@ -77,6 +91,9 @@ export const {
   createSubscriptionRequest,
   createSubscriptionSuccess,
   createSubscriptionFailure,
+  deleteSubscriptionRequest,
+  deleteSubscriptionSuccess,
+  deleteSubscriptionFailure,
   clearError,
 } = subscriptionSlice.actions
 

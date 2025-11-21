@@ -9,6 +9,7 @@ import {
   clearSelections,
   clearModel
 } from '../../store/cars/carsSlice'
+import { carsService } from '../../services/carsService'
 import { getFilesByYearRequest } from '../../store/files/filesSlice'
 import { API_BASE_URL } from '../../config/api'
 import './SearchCarPage.css'
@@ -40,6 +41,8 @@ const SearchCarPage = () => {
   const [currentStep, setCurrentStep] = useState<'brand' | 'model' | 'year' | 'files'>('brand')
   const [selectedYear, setSelectedYear] = useState<any>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<{brands: typeof brands, models: typeof models, years: typeof years}>({brands: [], models: [], years: []})
 
   useEffect(() => {
     dispatch(getBrandsRequest())
@@ -90,6 +93,91 @@ const SearchCarPage = () => {
     dispatch(getFilesByYearRequest({ yearId: year.id, userId: user?.user_id }))
   }
 
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      setSearchResults({ brands: [], models: [], years: [] })
+      return
+    }
+
+    try {
+      const [brandsResult, modelsResult, yearsResult] = await Promise.all([
+        carsService.searchBrand(searchQuery),
+        carsService.searchModel(searchQuery),
+        carsService.searchYear(searchQuery),
+      ])
+      
+      setSearchResults({
+        brands: brandsResult,
+        models: modelsResult,
+        years: yearsResult,
+      })
+    } catch (error) {
+      console.error('Ошибка поиска:', error)
+    }
+  }
+
+  const handleSearchResultClick = async (type: 'brand' | 'model' | 'year', item: any) => {
+    if (type === 'brand') {
+      dispatch(selectBrand(item))
+      setSearchQuery('')
+      setSearchResults({ brands: [], models: [], years: [] })
+    } else if (type === 'model') {
+      // Нужно получить brand_id для модели - загружаем бренды если их нет
+      let brand = brands.find(b => b.id === item.brand_id)
+      if (!brand && item.brand_id) {
+        // Если бренд не найден, загружаем все бренды и ищем
+        await dispatch(getBrandsRequest())
+        // Ждем обновления состояния
+        await new Promise(resolve => setTimeout(resolve, 200))
+        const updatedBrands = brands.length > 0 ? brands : []
+        brand = updatedBrands.find((b: any) => b.id === item.brand_id)
+      }
+      if (brand) {
+        dispatch(selectBrand(brand))
+        await new Promise(resolve => setTimeout(resolve, 200))
+        dispatch(selectModel(item))
+        setSearchQuery('')
+        setSearchResults({ brands: [], models: [], years: [] })
+      } else {
+        alert('Не удалось найти марку для этой модели')
+      }
+    } else if (type === 'year') {
+      // Нужно получить model_id и brand_id для года
+      let model = models.find(m => m.id === item.model_id)
+      if (!model && item.model_id) {
+        // Загружаем модели для поиска
+        if (selectedBrand) {
+          await dispatch(getModelsRequest(selectedBrand.id))
+          await new Promise(resolve => setTimeout(resolve, 200))
+          const updatedModels = models.length > 0 ? models : []
+          model = updatedModels.find((m: any) => m.id === item.model_id)
+        }
+      }
+      if (model) {
+        let brand = brands.find(b => b.id === model.brand_id)
+        if (!brand && model.brand_id) {
+          await dispatch(getBrandsRequest())
+          await new Promise(resolve => setTimeout(resolve, 200))
+          const updatedBrands = brands.length > 0 ? brands : []
+          brand = updatedBrands.find((b: any) => b.id === model.brand_id)
+        }
+        if (brand) {
+          dispatch(selectBrand(brand))
+          await new Promise(resolve => setTimeout(resolve, 200))
+          dispatch(selectModel(model))
+          await new Promise(resolve => setTimeout(resolve, 200))
+          handleYearSelect(item)
+          setSearchQuery('')
+          setSearchResults({ brands: [], models: [], years: [] })
+        } else {
+          alert('Не удалось найти марку для этой модели')
+        }
+      } else {
+        alert('Не удалось найти модель для этого года')
+      }
+    }
+  }
+
   return (
     <div className="search-car-page">
       <div className="search-header">
@@ -101,20 +189,89 @@ const SearchCarPage = () => {
         )}
       </div>
 
-      <div className="breadcrumb">
+      {currentStep === 'brand' && (
+        <div className="search-box">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            placeholder="🔍 Поиск по марке, модели или году..."
+            className="search-input"
+          />
+          <button onClick={handleSearch} className="btn-search">
+            Найти
+          </button>
+        </div>
+      )}
+
+      {currentStep === 'brand' && searchQuery && (searchResults.brands.length > 0 || searchResults.models.length > 0 || searchResults.years.length > 0) && (
+        <div className="search-results">
+          {searchResults.brands.length > 0 && (
+            <div className="search-results-group">
+              <h3>Марки:</h3>
+              <div className="items-grid">
+                {searchResults.brands.map((brand) => (
+                  <button
+                    key={brand.id}
+                    className="item-card"
+                    onClick={() => handleSearchResultClick('brand', brand)}
+                  >
+                    {brand.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {searchResults.models.length > 0 && (
+            <div className="search-results-group">
+              <h3>Модели:</h3>
+              <div className="items-grid">
+                {searchResults.models.map((model) => (
+                  <button
+                    key={model.id}
+                    className="item-card"
+                    onClick={() => handleSearchResultClick('model', model)}
+                  >
+                    {model.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {searchResults.years.length > 0 && (
+            <div className="search-results-group">
+              <h3>Годы:</h3>
+              <div className="items-grid">
+                {searchResults.years.map((year) => (
+                  <button
+                    key={year.id}
+                    className="item-card"
+                    onClick={() => handleSearchResultClick('year', year)}
+                  >
+                    {year.value}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className={`${selectedBrand ? 'breadcrumb' : ''}`}>
         {selectedBrand && (
           <span className="breadcrumb-item">
-            Марка: <strong>{selectedBrand.brand}</strong>
+            Марка: <strong>{selectedBrand.name}</strong>
           </span>
         )}
         {selectedModel && (
           <span className="breadcrumb-item">
-            Модель: <strong>{selectedModel.model}</strong>
+            Модель: <strong>{selectedModel.name}</strong>
           </span>
         )}
         {selectedYear && (
           <span className="breadcrumb-item">
-            Год: <strong>{selectedYear.year}</strong>
+            Год: <strong>{selectedYear.value}</strong>
           </span>
         )}
       </div>
@@ -132,7 +289,7 @@ const SearchCarPage = () => {
                   className="item-card"
                   onClick={() => handleBrandSelect(brand)}
                 >
-                  {brand.brand}
+                  {brand.name}
                 </button>
               ))}
             </div>
@@ -142,7 +299,7 @@ const SearchCarPage = () => {
 
       {currentStep === 'model' && selectedBrand && (
         <div className="step-content">
-          <h2>Выберите модель {selectedBrand.brand}</h2>
+          <h2>Выберите модель {selectedBrand.name}</h2>
           {loading ? (
             <p>Загрузка...</p>
           ) : models.length > 0 ? (
@@ -153,7 +310,7 @@ const SearchCarPage = () => {
                   className="item-card"
                   onClick={() => handleModelSelect(model)}
                 >
-                  {model.model}
+                  {model.name}
                 </button>
               ))}
             </div>
@@ -165,7 +322,7 @@ const SearchCarPage = () => {
 
       {currentStep === 'year' && selectedModel && (
         <div className="step-content">
-          <h2>Выберите год выпуска для {selectedBrand?.brand} {selectedModel.model}</h2>
+          <h2>Выберите год выпуска для {selectedBrand?.name} {selectedModel.name}</h2>
           {loading ? (
             <p>Загрузка годов...</p>
           ) : years.length > 0 ? (
@@ -176,7 +333,7 @@ const SearchCarPage = () => {
                   className="item-card"
                   onClick={() => handleYearSelect(year)}
                 >
-                  {year.year}
+                  {year.value}
                 </button>
               ))}
             </div>
@@ -188,7 +345,7 @@ const SearchCarPage = () => {
 
       {currentStep === 'files' && selectedYear && (
         <div className="step-content">
-          <h2>Файлы для {selectedBrand?.brand} {selectedModel?.model} {selectedYear.year}</h2>
+          <h2>Файлы для {selectedBrand?.name} {selectedModel?.name} {selectedYear.value}</h2>
           {filesLoading ? (
             <p>Загрузка файлов...</p>
           ) : filesByYear && filesByYear.files.length > 0 ? (

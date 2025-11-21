@@ -32,7 +32,7 @@ const CarsPage = () => {
                 className={`brand-item ${selectedBrand?.id === brand.id ? 'active' : ''}`}
                 onClick={() => handleBrandSelect(brand)}
               >
-                {brand.brand}
+                {brand.name}
               </button>
             ))}
           </div>
@@ -40,12 +40,12 @@ const CarsPage = () => {
 
         {selectedBrand && (
           <div className="models-section">
-            <h2>Модели {selectedBrand.brand}</h2>
+            <h2>Модели {selectedBrand.name}</h2>
             {models.length > 0 ? (
               <div className="models-list">
                 {models.map((model) => (
                   <div key={model.id} className="model-item">
-                    {model.model}
+                    {model.name}
                   </div>
                 ))}
               </div>

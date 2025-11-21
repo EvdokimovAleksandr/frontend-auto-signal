@@ -1,59 +1,56 @@
 // User types
 export interface User {
-  id: number
-  user_id: string // BigInt возвращается как строка
+  user_id: string // BigInt возвращается как строка (PRIMARY KEY)
   username?: string | null
-  name?: string | null
+  first_name?: string | null
+  last_name?: string | null
   created_at?: string | null
-  stage: number
-  page: number
 }
 
 export interface RegisterUserRequest {
   userId: string
   username?: string
-  name?: string
+  first_name?: string
+  last_name?: string
 }
 
 export interface UpdateUserRequest {
   username?: string
-  name?: string
-  stage?: number
-  page?: number
+  first_name?: string
+  last_name?: string
 }
 
 // Car types
 export interface Brand {
   id: number
-  brand: string
+  name: string
 }
 
 export interface Model {
   id: number
-  model: string
+  name: string
   brand_id?: number | null
-  brand?: string | null
 }
 
 export interface Year {
   id: number
-  year: string
+  value: string
   model_id?: number | null
-  brand?: string | null
-  model?: string | null
 }
 
 // File types
 export interface File {
   id: number
-  photo?: string | null
-  pdf?: string | null
-  premium_photo?: string | null
-  premium_pdf?: string | null
+  name?: string | null
+  path?: string | null
+  is_premium?: boolean | null
   year_id?: number | null
-  year?: string | null
-  model?: string | null
-  brand?: string | null
+  created_at?: string | null
+  // Поля, которые бэкенд формирует динамически
+  photo?: string | null
+  premium_photo?: string | null
+  pdf?: string | null
+  premium_pdf?: string | null
   caption?: string | null
 }
 
@@ -68,9 +65,7 @@ export interface FilesByYearResponse {
 export interface Subscription {
   id: number
   user_id: string
-  sub_start: string
   sub_end: string
-  status: string
   period_months?: number | null
 }
 
@@ -96,6 +91,20 @@ export interface AdminStats {
   brands_count: number
   models_count: number
   years_count: number
+  admins_count?: number
+  total_files?: number
+  photos_count?: number
+  premium_photos_count?: number
+  pdfs_count?: number
+  premium_pdfs_count?: number
+  files_with_descriptions?: number
+  total_file_accesses?: number
+  unique_users_accessed?: number
+  average_accesses_per_user?: string
+  new_users_last_month?: number
+  new_subscriptions_last_month?: number
+  subscriptions_by_period?: Record<number, number>
+  average_subscription_months?: string
 }
 
 export interface AdminUser {
@@ -130,6 +139,33 @@ export interface ApiError {
   error: string
   message?: string
   statusCode?: number
+}
+
+// Top Models types
+export interface TopModel {
+  rank: number
+  brand: string
+  model: string
+  accessCount: number
+}
+
+// Bot Settings types
+export interface BotSetting {
+  id?: number
+  setting_key: string
+  setting_value: string
+}
+
+// File Description types
+export interface FileForDescription {
+  id: number
+  file_type: string
+  photo?: string | null
+  premium_photo?: string | null
+  pdf?: string | null
+  premium_pdf?: string | null
+  caption?: string | null
+  year_id?: number | null
 }
 
 

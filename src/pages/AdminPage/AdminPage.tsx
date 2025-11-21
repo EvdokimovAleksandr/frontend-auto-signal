@@ -3,27 +3,50 @@ import { useAppDispatch, useAppSelector } from '../../utils/hooks'
 import { 
   getStatsRequest, 
   getAdminsRequest, 
-  getPricesRequest 
+  getPricesRequest,
+  getDetailedStatsRequest,
+  getTopModelsRequest,
+  getSettingsRequest,
+  updateStartMessageRequest
 } from '../../store/admin/adminSlice'
 import { adminService } from '../../services/adminService'
 import './AdminPage.css'
 
 const AdminPage = () => {
   const dispatch = useAppDispatch()
-  const { stats, admins, prices, loading } = useAppSelector((state) => state.admin)
+  const { stats, detailedStats, topModels, admins, prices, settings, loading } = useAppSelector((state) => state.admin)
   const { isAdmin } = useAppSelector((state) => state.auth)
   
-  const [activeTab, setActiveTab] = useState<'stats' | 'admins' | 'prices'>('stats')
+  const [activeTab, setActiveTab] = useState<'stats' | 'detailed' | 'top-models' | 'admins' | 'prices' | 'settings'>('stats')
   const [newAdminInput, setNewAdminInput] = useState('')
   const [editingPrice, setEditingPrice] = useState<{ periodMonths: number; priceKopecks: number } | null>(null)
+  const [startMessage, setStartMessage] = useState('')
+  const [editingStartMessage, setEditingStartMessage] = useState(false)
 
   useEffect(() => {
     if (isAdmin) {
       dispatch(getStatsRequest())
       dispatch(getAdminsRequest())
       dispatch(getPricesRequest())
+      dispatch(getSettingsRequest())
     }
   }, [dispatch, isAdmin])
+
+  useEffect(() => {
+    if (activeTab === 'detailed') {
+      dispatch(getDetailedStatsRequest())
+    }
+    if (activeTab === 'top-models') {
+      dispatch(getTopModelsRequest())
+    }
+  }, [dispatch, activeTab])
+
+  useEffect(() => {
+    const startMessageSetting = settings.find(s => s.setting_key === 'start_message')
+    if (startMessageSetting) {
+      setStartMessage(startMessageSetting.setting_value)
+    }
+  }, [settings])
 
   if (!isAdmin) {
     return (
@@ -69,6 +92,16 @@ const AdminPage = () => {
     }
   }
 
+  const handleUpdateStartMessage = async () => {
+    try {
+      dispatch(updateStartMessageRequest(startMessage))
+      setEditingStartMessage(false)
+      dispatch(getSettingsRequest())
+    } catch (error: any) {
+      alert(error.response?.data?.error || 'Ошибка при обновлении сообщения')
+    }
+  }
+
   return (
     <div className="admin-page">
       <h1>⚙️ Админ панель</h1>
@@ -79,6 +112,18 @@ const AdminPage = () => {
           onClick={() => setActiveTab('stats')}
         >
           📊 Статистика
+        </button>
+        <button 
+          className={activeTab === 'detailed' ? 'active' : ''}
+          onClick={() => setActiveTab('detailed')}
+        >
+          📈 Детальная статистика
+        </button>
+        <button 
+          className={activeTab === 'top-models' ? 'active' : ''}
+          onClick={() => setActiveTab('top-models')}
+        >
+          🏆 Топ-20 моделей
         </button>
         <button 
           className={activeTab === 'admins' ? 'active' : ''}
@@ -92,6 +137,24 @@ const AdminPage = () => {
         >
           💰 Цены подписок
         </button>
+        <button 
+          className={activeTab === 'settings' ? 'active' : ''}
+          onClick={() => setActiveTab('settings')}
+        >
+          ⚙️ Настройки
+        </button>
+      </div>
+
+      <div className="admin-quick-links">
+        <a href="/admin/manage-cars" className="quick-link">
+          🚗 Управление автомобилями
+        </a>
+        <a href="/admin/manage-files" className="quick-link">
+          📁 Управление файлами
+        </a>
+        <a href="/admin/manage-descriptions" className="quick-link">
+          📝 Управление описаниями
+        </a>
       </div>
 
       {loading && <p className="loading">Загрузка...</p>}
@@ -291,6 +354,302 @@ const AdminPage = () => {
           ) : (
             <p>Цены не найдены</p>
           )}
+        </div>
+      )}
+
+      {activeTab === 'detailed' && (
+        <div className="stats-section">
+          {loading ? (
+            <p className="loading">Загрузка...</p>
+          ) : detailedStats ? (
+            <>
+              <div className="stats-group">
+                <h3 className="stats-group-title">👥 Пользователи</h3>
+                <div className="stats-grid">
+                  <div className="stat-card stat-card-primary">
+                    <div className="stat-icon">👤</div>
+                    <div className="stat-content">
+                      <p className="stat-label">Всего пользователей</p>
+                      <p className="stat-number">{detailedStats.total_users}</p>
+                    </div>
+                  </div>
+                  <div className="stat-card stat-card-success">
+                    <div className="stat-icon">💎</div>
+                    <div className="stat-content">
+                      <p className="stat-label">Премиум пользователей</p>
+                      <p className="stat-number">{detailedStats.premium_users}</p>
+                    </div>
+                  </div>
+                  <div className="stat-card stat-card-info">
+                    <div className="stat-icon">👋</div>
+                    <div className="stat-content">
+                      <p className="stat-label">Обычных пользователей</p>
+                      <p className="stat-number">{detailedStats.regular_users}</p>
+                    </div>
+                  </div>
+                  {detailedStats.new_users_last_month !== undefined && (
+                    <div className="stat-card stat-card-secondary">
+                      <div className="stat-icon">📈</div>
+                      <div className="stat-content">
+                        <p className="stat-label">Новых за месяц</p>
+                        <p className="stat-number">{detailedStats.new_users_last_month}</p>
+                      </div>
+                    </div>
+                  )}
+                  {detailedStats.admins_count !== undefined && (
+                    <div className="stat-card stat-card-warning">
+                      <div className="stat-icon">👑</div>
+                      <div className="stat-content">
+                        <p className="stat-label">Администраторов</p>
+                        <p className="stat-number">{detailedStats.admins_count}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="stats-group">
+                <h3 className="stats-group-title">🚗 Автомобили</h3>
+                <div className="stats-grid">
+                  <div className="stat-card stat-card-warning">
+                    <div className="stat-icon">🏭</div>
+                    <div className="stat-content">
+                      <p className="stat-label">Марок</p>
+                      <p className="stat-number">{detailedStats.brands_count}</p>
+                    </div>
+                  </div>
+                  <div className="stat-card stat-card-danger">
+                    <div className="stat-icon">🚙</div>
+                    <div className="stat-content">
+                      <p className="stat-label">Моделей</p>
+                      <p className="stat-number">{detailedStats.models_count}</p>
+                    </div>
+                  </div>
+                  <div className="stat-card stat-card-secondary">
+                    <div className="stat-icon">📅</div>
+                    <div className="stat-content">
+                      <p className="stat-label">Годов выпуска</p>
+                      <p className="stat-number">{detailedStats.years_count}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {detailedStats.total_files !== undefined && (
+                <div className="stats-group">
+                  <h3 className="stats-group-title">📁 Файлы</h3>
+                  <div className="stats-grid">
+                    <div className="stat-card stat-card-primary">
+                      <div className="stat-icon">📦</div>
+                      <div className="stat-content">
+                        <p className="stat-label">Всего файлов</p>
+                        <p className="stat-number">{detailedStats.total_files}</p>
+                      </div>
+                    </div>
+                    {detailedStats.photos_count !== undefined && (
+                      <div className="stat-card stat-card-info">
+                        <div className="stat-icon">📷</div>
+                        <div className="stat-content">
+                          <p className="stat-label">Фото</p>
+                          <p className="stat-number">{detailedStats.photos_count}</p>
+                        </div>
+                      </div>
+                    )}
+                    {detailedStats.premium_photos_count !== undefined && (
+                      <div className="stat-card stat-card-success">
+                        <div className="stat-icon">💎📷</div>
+                        <div className="stat-content">
+                          <p className="stat-label">Премиум фото</p>
+                          <p className="stat-number">{detailedStats.premium_photos_count}</p>
+                        </div>
+                      </div>
+                    )}
+                    {detailedStats.pdfs_count !== undefined && (
+                      <div className="stat-card stat-card-warning">
+                        <div className="stat-icon">📄</div>
+                        <div className="stat-content">
+                          <p className="stat-label">PDF</p>
+                          <p className="stat-number">{detailedStats.pdfs_count}</p>
+                        </div>
+                      </div>
+                    )}
+                    {detailedStats.premium_pdfs_count !== undefined && (
+                      <div className="stat-card stat-card-danger">
+                        <div className="stat-icon">💎📄</div>
+                        <div className="stat-content">
+                          <p className="stat-label">Премиум PDF</p>
+                          <p className="stat-number">{detailedStats.premium_pdfs_count}</p>
+                        </div>
+                      </div>
+                    )}
+                    {detailedStats.files_with_descriptions !== undefined && (
+                      <div className="stat-card stat-card-secondary">
+                        <div className="stat-icon">📝</div>
+                        <div className="stat-content">
+                          <p className="stat-label">С описаниями</p>
+                          <p className="stat-number">{detailedStats.files_with_descriptions}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {detailedStats.total_file_accesses !== undefined && (
+                <div className="stats-group">
+                  <h3 className="stats-group-title">📊 Статистика доступа</h3>
+                  <div className="stats-grid">
+                    <div className="stat-card stat-card-primary">
+                      <div className="stat-icon">👁️</div>
+                      <div className="stat-content">
+                        <p className="stat-label">Всего обращений</p>
+                        <p className="stat-number">{detailedStats.total_file_accesses}</p>
+                      </div>
+                    </div>
+                    {detailedStats.unique_users_accessed !== undefined && (
+                      <div className="stat-card stat-card-info">
+                        <div className="stat-icon">👥</div>
+                        <div className="stat-content">
+                          <p className="stat-label">Уникальных пользователей</p>
+                          <p className="stat-number">{detailedStats.unique_users_accessed}</p>
+                        </div>
+                      </div>
+                    )}
+                    {detailedStats.average_accesses_per_user !== undefined && (
+                      <div className="stat-card stat-card-success">
+                        <div className="stat-icon">📈</div>
+                        <div className="stat-content">
+                          <p className="stat-label">Среднее на пользователя</p>
+                          <p className="stat-number">{detailedStats.average_accesses_per_user}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {detailedStats.new_subscriptions_last_month !== undefined && (
+                <div className="stats-group">
+                  <h3 className="stats-group-title">💎 Подписки</h3>
+                  <div className="stats-grid">
+                    <div className="stat-card stat-card-success">
+                      <div className="stat-icon">📅</div>
+                      <div className="stat-content">
+                        <p className="stat-label">Новых за месяц</p>
+                        <p className="stat-number">{detailedStats.new_subscriptions_last_month}</p>
+                      </div>
+                    </div>
+                    {detailedStats.average_subscription_months !== undefined && (
+                      <div className="stat-card stat-card-info">
+                        <div className="stat-icon">⏱️</div>
+                        <div className="stat-content">
+                          <p className="stat-label">Средний период (мес.)</p>
+                          <p className="stat-number">{detailedStats.average_subscription_months}</p>
+                        </div>
+                      </div>
+                    )}
+                    {detailedStats.subscriptions_by_period && Object.keys(detailedStats.subscriptions_by_period).length > 0 && (
+                      <div className="stat-card stat-card-secondary" style={{ gridColumn: 'span 2' }}>
+                        <div className="stat-icon">📊</div>
+                        <div className="stat-content">
+                          <p className="stat-label">Распределение по периодам:</p>
+                          <div style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
+                            {Object.entries(detailedStats.subscriptions_by_period).map(([period, count]) => (
+                              <span key={period} style={{ marginRight: '1rem' }}>
+                                {period} мес.: {count}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <p>Данные не загружены</p>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'top-models' && (
+        <div className="top-models-section">
+          <h2>🏆 Топ-20 самых популярных моделей</h2>
+          {loading ? (
+            <p className="loading">Загрузка...</p>
+          ) : topModels.length > 0 ? (
+            <table className="top-models-table">
+              <thead>
+                <tr>
+                  <th>Место</th>
+                  <th>Марка</th>
+                  <th>Модель</th>
+                  <th>Количество обращений</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topModels.map((model) => (
+                  <tr key={`${model.brand}-${model.model}`}>
+                    <td>{model.rank}</td>
+                    <td>{model.brand}</td>
+                    <td>{model.model}</td>
+                    <td>{model.accessCount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>Статистика доступа к моделям пока отсутствует</p>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'settings' && (
+        <div className="settings-section">
+          <h2>⚙️ Настройки бота</h2>
+          
+          <div className="setting-item">
+            <h3>📝 Стартовое сообщение</h3>
+            {editingStartMessage ? (
+              <div className="edit-start-message">
+                <textarea
+                  value={startMessage}
+                  onChange={(e) => setStartMessage(e.target.value)}
+                  rows={6}
+                  className="start-message-input"
+                  placeholder="Введите стартовое сообщение..."
+                />
+                <div className="setting-actions">
+                  <button onClick={handleUpdateStartMessage} className="btn-save">
+                    ✅ Сохранить
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setEditingStartMessage(false)
+                      const startMessageSetting = settings.find(s => s.setting_key === 'start_message')
+                      if (startMessageSetting) {
+                        setStartMessage(startMessageSetting.setting_value)
+                      }
+                    }} 
+                    className="btn-cancel"
+                  >
+                    ❌ Отмена
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="view-start-message">
+                <p className="start-message-preview">{startMessage || 'Стартовое сообщение не установлено'}</p>
+                <button 
+                  onClick={() => setEditingStartMessage(true)} 
+                  className="btn-edit"
+                >
+                  ✏️ Редактировать
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

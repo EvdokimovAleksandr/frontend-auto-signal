@@ -28,6 +28,7 @@ const Layout = ({ children }: LayoutProps) => {
           <nav className="nav">
             <Link to="/" className="nav-link">Главная</Link>
             <Link to="/cars" className="nav-link">Автомобили</Link>
+            <Link to="/help" className="nav-link">Справка</Link>
             {isAuthenticated && (
               <>
                 <Link to="/subscriptions" className="nav-link">Подписки</Link>
