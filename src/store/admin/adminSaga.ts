@@ -23,13 +23,14 @@ import {
   updateStartMessageFailure,
 } from './adminSlice'
 import { adminService } from '../../services/adminService'
+import { handleSagaError } from '../utils/sagaErrorHandler'
 
 function* getStatsSaga() {
   try {
     const stats = yield call(adminService.getStats)
     yield put(getStatsSuccess(stats))
   } catch (error: any) {
-    yield put(getStatsFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, getStatsFailure)
   }
 }
 
@@ -38,7 +39,7 @@ function* getAdminsSaga() {
     const admins = yield call(adminService.getAdmins)
     yield put(getAdminsSuccess(admins))
   } catch (error: any) {
-    yield put(getAdminsFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, getAdminsFailure)
   }
 }
 
@@ -47,7 +48,7 @@ function* getPricesSaga() {
     const prices = yield call(adminService.getPrices)
     yield put(getPricesSuccess(prices))
   } catch (error: any) {
-    yield put(getPricesFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, getPricesFailure)
   }
 }
 
@@ -56,7 +57,7 @@ function* getDetailedStatsSaga() {
     const stats = yield call(adminService.getDetailedStats)
     yield put(getDetailedStatsSuccess(stats))
   } catch (error: any) {
-    yield put(getDetailedStatsFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, getDetailedStatsFailure)
   }
 }
 
@@ -65,7 +66,7 @@ function* getTopModelsSaga() {
     const topModels = yield call(adminService.getTopModels)
     yield put(getTopModelsSuccess(topModels))
   } catch (error: any) {
-    yield put(getTopModelsFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, getTopModelsFailure)
   }
 }
 
@@ -74,7 +75,7 @@ function* getSettingsSaga() {
     const settings = yield call(adminService.getSettings)
     yield put(getSettingsSuccess(settings))
   } catch (error: any) {
-    yield put(getSettingsFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, getSettingsFailure)
   }
 }
 
@@ -83,7 +84,7 @@ function* updateStartMessageSaga(action: any) {
     const setting = yield call(adminService.updateStartMessage, action.payload)
     yield put(updateStartMessageSuccess(setting))
   } catch (error: any) {
-    yield put(updateStartMessageFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, updateStartMessageFailure)
   }
 }
 
@@ -96,6 +97,3 @@ export default function* adminSaga() {
   yield takeEvery(getSettingsRequest.type, getSettingsSaga)
   yield takeEvery(updateStartMessageRequest.type, updateStartMessageSaga)
 }
-
-
-

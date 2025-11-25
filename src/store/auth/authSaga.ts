@@ -8,6 +8,7 @@ import {
   getCurrentUserFailure,
 } from './authSlice'
 import { authService } from '../../services/authService'
+import { isAuthError } from '../../services/api'
 
 function* loginSaga(action: ReturnType<typeof loginRequest>) {
   try {
@@ -32,7 +33,14 @@ function* getCurrentUserSaga() {
       isPremium: response.isPremium,
     }))
   } catch (error: any) {
-    yield put(getCurrentUserFailure(error.response?.data?.error || error.message))
+    // Передаём и текст ошибки, и код статуса для правильной обработки
+    const statusCode = error.response?.status
+    const errorMessage = error.response?.data?.error || error.message
+    
+    yield put(getCurrentUserFailure({
+      error: errorMessage,
+      statusCode: statusCode,
+    }))
   }
 }
 
@@ -40,4 +48,3 @@ export default function* authSaga() {
   yield takeEvery(loginRequest.type, loginSaga)
   yield takeEvery(getCurrentUserRequest.type, getCurrentUserSaga)
 }
-

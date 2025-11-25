@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../utils/hooks'
 import { logout } from '../../store/auth/authSlice'
-import './Layout.css'
+import styles from './Layout.module.css'
 
 interface LayoutProps {
   children: ReactNode
@@ -19,50 +19,49 @@ const Layout = ({ children }: LayoutProps) => {
   }
 
   return (
-    <div className="layout">
-      <header className="header">
-        <div className="container">
-          <Link to="/" className="logo">
+    <div className={styles.layout}>
+      <header className={styles.header}>
+        <div className={styles.headerContainer}>
+          <Link to="/" className={styles.logo}>
             Auto Signal
           </Link>
-          <nav className="nav">
-            <Link to="/" className="nav-link">Главная</Link>
-            <Link to="/cars" className="nav-link">Автомобили</Link>
-            <Link to="/help" className="nav-link">Справка</Link>
+          <nav className={styles.nav}>
+            <Link to="/" className={styles.navLink}>Главная</Link>
+            <Link to="/cars" className={styles.navLink}>Автомобили</Link>
+            <Link to="/help" className={styles.navLink}>Справка</Link>
             {isAuthenticated && (
               <>
-                <Link to="/subscriptions" className="nav-link">Подписки</Link>
+                <Link to="/subscriptions" className={styles.navLink}>Подписки</Link>
                 {isAdmin && (
-                  <Link to="/admin" className="nav-link">Админ</Link>
+                  <Link to="/admin" className={styles.navLink}>Админ</Link>
                 )}
               </>
             )}
             {isAuthenticated ? (
-              <div className="user-info">
-                {isPremium && <span className="premium-badge">💎 Premium</span>}
-                {isAdmin && <span className="admin-badge">👑 Admin</span>}
-                <span className="user-name">{user?.name || user?.username || `User ${user?.user_id}`}</span>
-                <button onClick={handleLogout} className="btn-logout">
+              <div className={styles.userInfo}>
+                {isPremium && <span className={styles.premiumBadge}>💎 Premium</span>}
+                {isAdmin && <span className={styles.adminBadge}>👑 Admin</span>}
+                <span className={styles.userName}>
+                  {user?.name || user?.username || `User ${user?.user_id}`}
+                </span>
+                <button onClick={handleLogout} className={styles.btnLogout}>
                   Выйти
                 </button>
               </div>
             ) : (
-              <Link to="/login" className="btn-login">Войти</Link>
+              <Link to="/login" className={styles.btnLogin}>Войти</Link>
             )}
           </nav>
         </div>
       </header>
-      <main className="main">
-        <div className="container">{children}</div>
+      <main className={styles.main}>
+        <div className={styles.container}>{children}</div>
       </main>
-      <footer className="footer">
-        <div className="container">
-          <p>&copy; 2025 Auto Signal. All rights reserved.</p>
-        </div>
+      <footer className={styles.footer}>
+        <p className={styles.footerText}>&copy; 2025 Auto Signal. All rights reserved.</p>
       </footer>
     </div>
   )
 }
 
 export default Layout
-

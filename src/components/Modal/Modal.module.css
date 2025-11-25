@@ -1,0 +1,134 @@
+/* Оверлей */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Контейнер модального окна */
+.modal {
+  background: white;
+  border-radius: 16px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Размеры */
+.small {
+  width: 400px;
+}
+
+.medium {
+  width: 600px;
+}
+
+.large {
+  width: 800px;
+}
+
+.fullscreen {
+  width: 95vw;
+  height: 95vh;
+}
+
+/* Кнопка закрытия */
+.closeButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.closeButton:hover {
+  background: #e0e0e0;
+  transform: scale(1.1);
+}
+
+/* Заголовок */
+.header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  padding-right: 40px;
+}
+
+/* Контент */
+.content {
+  padding: 24px;
+}
+
+/* Футер */
+.footer {
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* Модальное окно для изображений */
+.imageModal {
+  background: transparent;
+  max-width: none;
+  width: auto;
+}
+
+.imageContent {
+  padding: 0;
+}
+
+.image {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+

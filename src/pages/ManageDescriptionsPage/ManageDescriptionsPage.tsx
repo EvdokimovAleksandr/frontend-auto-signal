@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAppSelector } from '../../utils/hooks'
 import { filesService } from '../../services/filesService'
+import logger from '../../utils/logger'
 import './ManageDescriptionsPage.css'
 
 const ManageDescriptionsPage = () => {
@@ -59,7 +60,7 @@ const ManageDescriptionsPage = () => {
       const data = await filesService.getBrandsForDescriptions(1, 100)
       setBrands(data.brands)
     } catch (error) {
-      console.error('Ошибка загрузки марок:', error)
+      logger.error('Ошибка загрузки марок:', error)
     } finally {
       setLoading(false)
     }
@@ -72,7 +73,7 @@ const ManageDescriptionsPage = () => {
       const modelsData = await filesService.getModelsByBrandForDescriptions(selectedBrand.id)
       setModels(modelsData)
     } catch (error) {
-      console.error('Ошибка загрузки моделей:', error)
+      logger.error('Ошибка загрузки моделей:', error)
     } finally {
       setLoading(false)
     }
@@ -85,7 +86,7 @@ const ManageDescriptionsPage = () => {
       const yearsData = await filesService.getYearsByModelForDescriptions(selectedModel.id)
       setYears(yearsData)
     } catch (error) {
-      console.error('Ошибка загрузки годов:', error)
+      logger.error('Ошибка загрузки годов:', error)
     } finally {
       setLoading(false)
     }
@@ -98,7 +99,7 @@ const ManageDescriptionsPage = () => {
       const filesData = await filesService.getFilesByYearForDescriptions(selectedYear.id, filter)
       setFiles(filesData)
     } catch (error) {
-      console.error('Ошибка загрузки файлов:', error)
+      logger.error('Ошибка загрузки файлов:', error)
     } finally {
       setLoading(false)
     }

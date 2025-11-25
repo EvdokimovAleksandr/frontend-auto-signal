@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../utils/hooks'
+import logger from '../../utils/logger'
 import { 
   getBrandsRequest, 
   getModelsRequest, 
@@ -61,7 +62,7 @@ const ManageFilesPage = () => {
       const files = await filesService.getFilesForPreview(selectedYear.id, fileType)
       setFilesForDeletion(files)
     } catch (error) {
-      console.error('Ошибка загрузки файлов:', error)
+      logger.error('Ошибка загрузки файлов:', error)
     }
   }
 

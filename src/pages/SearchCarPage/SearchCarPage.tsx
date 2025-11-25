@@ -12,6 +12,7 @@ import {
 import { carsService } from '../../services/carsService'
 import { getFilesByYearRequest } from '../../store/files/filesSlice'
 import { API_BASE_URL } from '../../config/api'
+import logger from '../../utils/logger'
 import './SearchCarPage.css'
 
 // Вспомогательная функция для нормализации URL изображения
@@ -112,7 +113,7 @@ const SearchCarPage = () => {
         years: yearsResult,
       })
     } catch (error) {
-      console.error('Ошибка поиска:', error)
+      logger.error('Ошибка поиска:', error)
     }
   }
 
@@ -361,7 +362,7 @@ const SearchCarPage = () => {
                         onClick={() => setSelectedImage(getImageUrl(file.photo))}
                         onError={(e) => {
                           const img = e.target as HTMLImageElement;
-                          console.error('Ошибка загрузки изображения:', {
+                          logger.error('Ошибка загрузки изображения:', {
                             src: img.src,
                             original: file.photo,
                             fileId: file.id,
@@ -370,7 +371,7 @@ const SearchCarPage = () => {
                           img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EИзображение не загружено%3C/text%3E%3C/svg%3E';
                         }}
                         onLoad={() => {
-                          console.log('✅ Изображение успешно загружено:', file.photo);
+                          logger.log('✅ Изображение успешно загружено:', file.photo);
                         }}
                       />
                       <p className="file-type">📷 Фото</p>
@@ -387,7 +388,7 @@ const SearchCarPage = () => {
                             onClick={() => setSelectedImage(getImageUrl(file.premium_photo))}
                             onError={(e) => {
                               const img = e.target as HTMLImageElement;
-                              console.error('Ошибка загрузки премиум изображения:', {
+                              logger.error('Ошибка загрузки премиум изображения:', {
                                 src: img.src,
                                 original: file.premium_photo,
                                 fileId: file.id
@@ -395,7 +396,7 @@ const SearchCarPage = () => {
                               img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EИзображение не загружено%3C/text%3E%3C/svg%3E';
                             }}
                             onLoad={() => {
-                              console.log('✅ Премиум изображение успешно загружено:', file.premium_photo);
+                              logger.log('✅ Премиум изображение успешно загружено:', file.premium_photo);
                             }}
                           />
                           <p className="file-type">💎 Премиум фото</p>
@@ -450,14 +451,14 @@ const SearchCarPage = () => {
                   className="modal-image"
                   onError={(e) => {
                     const img = e.target as HTMLImageElement;
-                    console.error('Ошибка загрузки изображения в модальном окне:', {
+                    logger.error('Ошибка загрузки изображения в модальном окне:', {
                       src: img.src,
                       original: selectedImage
                     });
                     img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23ddd" width="400" height="400"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="16" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EИзображение не загружено%3C/text%3E%3C/svg%3E';
                   }}
                   onLoad={() => {
-                    console.log('✅ Изображение в модальном окне загружено');
+                    logger.log('✅ Изображение в модальном окне загружено');
                   }}
                 />
               </div>

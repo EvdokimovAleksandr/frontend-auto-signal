@@ -14,13 +14,14 @@ import {
   updateUserFailure,
 } from './usersSlice'
 import { usersService } from '../../services/usersService'
+import { handleSagaError } from '../utils/sagaErrorHandler'
 
 function* registerUserSaga(action: ReturnType<typeof registerUserRequest>) {
   try {
     const user = yield call(usersService.registerUser, action.payload)
     yield put(registerUserSuccess(user))
   } catch (error: any) {
-    yield put(registerUserFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, registerUserFailure)
   }
 }
 
@@ -29,7 +30,7 @@ function* getUserSaga(action: ReturnType<typeof getUserRequest>) {
     const user = yield call(usersService.getUser, action.payload)
     yield put(getUserSuccess(user))
   } catch (error: any) {
-    yield put(getUserFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, getUserFailure)
   }
 }
 
@@ -41,7 +42,7 @@ function* getUsersSaga(action: ReturnType<typeof getUsersRequest>) {
       pagination: response.pagination,
     }))
   } catch (error: any) {
-    yield put(getUsersFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, getUsersFailure)
   }
 }
 
@@ -50,7 +51,7 @@ function* updateUserSaga(action: ReturnType<typeof updateUserRequest>) {
     const user = yield call(usersService.updateUser, action.payload.userId, action.payload.data)
     yield put(updateUserSuccess(user))
   } catch (error: any) {
-    yield put(updateUserFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, updateUserFailure)
   }
 }
 
@@ -60,6 +61,3 @@ export default function* usersSaga() {
   yield takeEvery(getUsersRequest.type, getUsersSaga)
   yield takeEvery(updateUserRequest.type, updateUserSaga)
 }
-
-
-
