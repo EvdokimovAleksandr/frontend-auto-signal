@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/utils/hooks'
-import { getCurrentUserRequest } from '@/store/auth/authSlice'
+import { getCurrentUserRequest, resetLogoutFlag } from '@/store/auth/authSlice'
 import Layout from '@/components/Layout/Layout'
 import NavigateSetter from '@/components/NavigateSetter/NavigateSetter'
 import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
@@ -18,14 +18,25 @@ import ManageDescriptionsPage from '@/pages/ManageDescriptionsPage/ManageDescrip
 
 function App() {
   const dispatch = useAppDispatch()
-  const { token } = useAppSelector((state) => state.auth)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { token, isLoggingOut, isAuthenticated } = useAppSelector((state) => state.auth)
 
   // Проверяем текущего пользователя при загрузке приложения
   useEffect(() => {
-    if (token) {
+    if (token && !isLoggingOut) {
       dispatch(getCurrentUserRequest())
     }
-  }, [dispatch, token])
+  }, [dispatch, token, isLoggingOut])
+
+  // Обрабатываем редирект при логауте
+  useEffect(() => {
+    if (isLoggingOut && location.pathname !== '/login') {
+      navigate('/login')
+      // Сбрасываем флаг после редиректа
+      dispatch(resetLogoutFlag())
+    }
+  }, [isLoggingOut, navigate, location.pathname, dispatch])
 
   return (
     <Layout>
@@ -48,4 +59,3 @@ function App() {
 }
 
 export default App
-

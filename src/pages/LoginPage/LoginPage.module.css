@@ -1,0 +1,96 @@
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
+  width: 100%;
+}
+
+.title {
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  text-align: center;
+  font-size: 1.75rem;
+}
+
+.infoBox {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #667eea;
+}
+
+.infoTitle {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.infoList {
+  margin: 0.5rem 0 0 0;
+  padding-left: 0;
+  list-style: none;
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+.infoList li {
+  margin-bottom: 0.25rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.hint {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fd 100%);
+  border-left: 3px solid #667eea;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.hint strong {
+  color: #2c3e50;
+  display: inline-block;
+  margin-right: 0.3rem;
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  padding: 0.75rem;
+  background: #fdf2f2;
+  border-radius: 6px;
+  border-left: 3px solid #e74c3c;
+}
+
+.helpBox {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #fff9e6 0%, #fef3cd 100%);
+  border-left: 3px solid #f39c12;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #856404;
+  line-height: 1.6;
+}
+
+.helpBox p {
+  margin: 0;
+}
+

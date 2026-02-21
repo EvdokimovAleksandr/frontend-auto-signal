@@ -26,13 +26,6 @@ const LoginPage = () => {
     }
   }, [isAuthenticated, navigate])
 
-  // Показываем успешный вход
-  useEffect(() => {
-    if (isAuthenticated && !loading) {
-      navigate('/')
-    }
-  }, [isAuthenticated, loading, navigate])
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (telegramInput.trim()) {
@@ -43,11 +36,12 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="login-page">
+        <div className="login-page">
       <div className="login-card">
-        <h1>🔐 Вход / Регистрация</h1>
+        <h1 className="login-title">🔐 Вход / Регистрация</h1>
+        
         <div className="login-info-box">
-          <p className="login-info">
+          <p className="login-info-title">
             <strong>Как это работает:</strong>
           </p>
           <ul className="login-info-list">
@@ -94,4 +88,3 @@ const LoginPage = () => {
 }
 
 export default LoginPage
-

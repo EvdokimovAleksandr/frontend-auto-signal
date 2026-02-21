@@ -1,0 +1,62 @@
+/* Контейнер */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+}
+
+/* Спиннер */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e0e0e0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Размеры */
+.small .spinner {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+.large .spinner {
+  width: 56px;
+  height: 56px;
+  border-width: 5px;
+}
+
+/* Текст */
+.text {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Полноэкранный */
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 999;
+}
+
+/* Inline */
+.inline {
+  display: inline-flex;
+  padding: 0;
+}
+

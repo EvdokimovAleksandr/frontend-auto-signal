@@ -58,9 +58,7 @@ const Layout = memo(({ children }: LayoutProps) => {
         <div className="container">{children}</div>
       </main>
       <footer className="footer">
-        <div className="container">
-          <p>&copy; 2025 Auto Signal. All rights reserved.</p>
-        </div>
+        <p>&copy; 2025 Auto Signal. All rights reserved.</p>
       </footer>
     </div>
   )
@@ -69,4 +67,3 @@ const Layout = memo(({ children }: LayoutProps) => {
 Layout.displayName = 'Layout'
 
 export default Layout
-

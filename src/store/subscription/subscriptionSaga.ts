@@ -14,13 +14,14 @@ import {
   deleteSubscriptionFailure,
 } from './subscriptionSlice'
 import { subscriptionService } from '@/services/subscriptionService'
+import { handleSagaError } from '@/store/utils/sagaErrorHandler'
 
 function* getPricesSaga() {
   try {
     const prices = yield call(subscriptionService.getPrices)
     yield put(getPricesSuccess(prices))
   } catch (error: any) {
-    yield put(getPricesFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, getPricesFailure)
   }
 }
 
@@ -29,7 +30,7 @@ function* getUserSubscriptionSaga(action: ReturnType<typeof getUserSubscriptionR
     const subscription = yield call(subscriptionService.getUserSubscription, action.payload)
     yield put(getUserSubscriptionSuccess(subscription))
   } catch (error: any) {
-    yield put(getUserSubscriptionFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, getUserSubscriptionFailure)
   }
 }
 
@@ -41,7 +42,7 @@ function* createSubscriptionSaga(action: ReturnType<typeof createSubscriptionReq
     })
     yield put(createSubscriptionSuccess(subscription))
   } catch (error: any) {
-    yield put(createSubscriptionFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, createSubscriptionFailure)
   }
 }
 
@@ -50,7 +51,7 @@ function* deleteSubscriptionSaga(action: ReturnType<typeof deleteSubscriptionReq
     yield call(subscriptionService.deleteSubscription, action.payload)
     yield put(deleteSubscriptionSuccess())
   } catch (error: any) {
-    yield put(deleteSubscriptionFailure(error.response?.data?.error || error.message))
+    yield* handleSagaError(error, deleteSubscriptionFailure)
   }
 }
 
@@ -60,6 +61,3 @@ export default function* subscriptionSaga() {
   yield takeEvery(createSubscriptionRequest.type, createSubscriptionSaga)
   yield takeEvery(deleteSubscriptionRequest.type, deleteSubscriptionSaga)
 }
-
-
-
