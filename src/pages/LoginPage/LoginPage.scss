@@ -1,0 +1,109 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.login-card {
+  @include card-base;
+  max-width: 400px;
+  width: 100%;
+}
+
+.login-card h1 {
+  margin-bottom: $space-4;
+  color: $color-text;
+  text-align: center;
+}
+
+.login-info-box {
+  background: #f8f9fa;
+  padding: $space-4;
+  border-radius: 6px;
+  margin-bottom: $space-5;
+  border-left: 4px solid $color-primary;
+}
+
+.login-info {
+  color: $color-text;
+  margin-bottom: $space-2;
+  font-size: 0.95rem;
+}
+
+.login-info-list {
+  margin: $space-2 0 0;
+  padding-left: 1.2rem;
+  color: #555;
+  font-size: $font-size-sm;
+  line-height: $line-height-relaxed;
+
+  li {
+    margin-bottom: 0.3rem;
+  }
+}
+
+.form-group {
+  margin-bottom: $space-5;
+
+  label {
+    display: block;
+    margin-bottom: $space-2;
+    color: $color-text;
+    font-weight: $font-weight-medium;
+  }
+
+  input {
+    width: 100%;
+    padding: $space-3;
+    border: 1px solid #ddd;
+    border-radius: $radius-sm;
+    font-size: $font-size-base;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+  }
+}
+
+.required {
+  color: $color-danger;
+  font-weight: $font-weight-bold;
+}
+
+.field-hint {
+  margin-top: $space-2;
+  padding: $space-3;
+  background: #f0f7ff;
+  border-left: 3px solid $color-primary;
+  border-radius: $radius-sm;
+  font-size: 0.85rem;
+  color: #555;
+  line-height: $line-height-base;
+
+  strong {
+    color: $color-text;
+  }
+}
+
+.btn-submit {
+  width: 100%;
+  padding: $space-3;
+  font-size: $font-size-base;
+}
+
+.login-help {
+  margin-top: $space-4;
+  padding: $space-3;
+  background: #fff9e6;
+  border-left: 3px solid $color-premium;
+  border-radius: $radius-sm;
+  font-size: 0.85rem;
+  color: #856404;
+  line-height: $line-height-base;
+}

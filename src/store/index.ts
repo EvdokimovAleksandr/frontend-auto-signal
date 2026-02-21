@@ -16,7 +16,7 @@ export const store = configureStore({
         ignoredActions: ['persist/PERSIST'], // Игнорируем действия persist
       },
     }).concat(sagaMiddleware),
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: import.meta.env.DEV,
 })
 
 // Запускаем root saga
@@ -24,6 +24,8 @@ sagaMiddleware.run(rootSaga)
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
+
+
 
 
 

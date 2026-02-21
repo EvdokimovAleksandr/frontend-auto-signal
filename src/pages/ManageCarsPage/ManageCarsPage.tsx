@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../../utils/hooks'
+import { useAppDispatch, useAppSelector } from '@/utils/hooks'
 import { 
   getBrandsRequest, 
   getModelsRequest, 
@@ -7,9 +7,9 @@ import {
   selectBrand,
   selectModel,
   clearSelections
-} from '../../store/cars/carsSlice'
-import { carsService } from '../../services/carsService'
-import './ManageCarsPage.css'
+} from '@/store/cars/carsSlice'
+import { carsService } from '@/services/carsService'
+import './ManageCarsPage.scss'
 
 const ManageCarsPage = () => {
   const dispatch = useAppDispatch()
@@ -528,4 +528,6 @@ const ManageCarsPage = () => {
 }
 
 export default ManageCarsPage
+
+
 

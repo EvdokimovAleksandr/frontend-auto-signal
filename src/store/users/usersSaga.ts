@@ -13,7 +13,7 @@ import {
   updateUserSuccess,
   updateUserFailure,
 } from './usersSlice'
-import { usersService } from '../../services/usersService'
+import { usersService } from '@/services/usersService'
 
 function* registerUserSaga(action: ReturnType<typeof registerUserRequest>) {
   try {
@@ -60,6 +60,8 @@ export default function* usersSaga() {
   yield takeEvery(getUsersRequest.type, getUsersSaga)
   yield takeEvery(updateUserRequest.type, updateUserSaga)
 }
+
+
 
 
 

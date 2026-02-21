@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '../../utils/hooks'
-import { loginRequest, getCurrentUserRequest } from '../../store/auth/authSlice'
-import './LoginPage.css'
+import { useAppDispatch, useAppSelector } from '@/utils/hooks'
+import { loginRequest, getCurrentUserRequest } from '@/store/auth/authSlice'
+import { Button, ErrorMessage } from '@/components/ui'
+import './LoginPage.scss'
 
 const LoginPage = () => {
   const [telegramInput, setTelegramInput] = useState('')
@@ -53,40 +54,38 @@ const LoginPage = () => {
             <li>✅ <strong>Логин и регистрация</strong> - это один процесс</li>
             <li>✅ Если вы <strong>новый пользователь</strong> - аккаунт создастся автоматически</li>
             <li>✅ Если вы <strong>уже зарегистрированы</strong> - просто войдите с вашим username или User ID</li>
-            <li>✅ <strong>Можно ввести @username</strong> - система автоматически получит ваш User ID</li>
+            <li>✅ <strong>Можно ввести @username</strong> — система автоматически определит ваш User ID</li>
           </ul>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="telegramInput">
-              Telegram Username или User ID <span className="required">*</span>
+              Username или User ID <span className="required">*</span>
             </label>
             <input
               id="telegramInput"
               type="text"
               value={telegramInput}
               onChange={(e) => setTelegramInput(e.target.value)}
-              placeholder="@NucWinter или 123456789"
+              placeholder="@username или 123456789"
               required
             />
             <div className="field-hint">
-              <strong>Вариант 1 (рекомендуется):</strong> Введите ваш Telegram username с @
+              <strong>Вариант 1 (рекомендуется):</strong> Введите ваш username с @ (например, @username)
               <br />
-              <strong>Пример:</strong> @NucWinter, @username, @TytaPaxa
-              <br />
-              <strong>Вариант 2:</strong> Введите числовой User ID
-              <br />
-              <strong>Пример:</strong> 123456789, 5158383447, 5378516737
-              <br />
-              <strong>💡 Автоматически:</strong> Если указан username, система сама получит User ID через Telegram Bot API
+              <strong>Вариант 2:</strong> Введите числовой User ID (например, 123456789)
             </div>
           </div>
-          {error && <p className="error">{error}</p>}
-          <button type="submit" disabled={loading || !telegramInput.trim()} className="btn-submit">
+          {error && <ErrorMessage message={error} />}
+          <Button
+            type="submit"
+            disabled={loading || !telegramInput.trim()}
+            className="btn-submit"
+          >
             {loading ? '⏳ Вход...' : '🚀 Войти / Зарегистрироваться'}
-          </button>
+          </Button>
           <div className="login-help">
-            <p><strong>💡 Подсказка:</strong> Просто введите ваш Telegram username (например, @NucWinter) и система автоматически получит ваш User ID. Или используйте числовой User ID напрямую.</p>
+            <p><strong>💡 Подсказка:</strong> Введите username с @ или числовой User ID для входа.</p>
           </div>
         </form>
       </div>

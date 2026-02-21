@@ -1,0 +1,491 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.admin-page {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: $space-4 $space-6;
+  width: 100%;
+}
+
+.admin-page h1 {
+  margin-bottom: $space-6;
+  color: $color-text;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: $space-4;
+  margin-bottom: $space-6;
+  border-bottom: 2px solid $color-border;
+
+  button {
+    padding: $space-3 $space-5;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: $font-size-base;
+    color: $color-text-muted;
+    @include transition(all);
+
+    &:hover {
+      color: $color-primary;
+      background: #f8f9fa;
+    }
+
+    &.active {
+      color: $color-primary;
+      border-bottom-color: $color-primary;
+      font-weight: 600;
+    }
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: $space-6;
+  color: $color-text-muted;
+}
+
+.stats-section h2,
+.admins-section h2,
+.prices-section h2 {
+  margin-bottom: $space-6;
+  color: $color-text;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.stats-group {
+  margin-bottom: 2.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.stats-group-title {
+  font-size: $font-size-lg;
+  font-weight: 600;
+  color: $color-secondary-light;
+  margin-bottom: $space-3;
+  padding-bottom: $space-3;
+  border-bottom: 2px solid $color-border;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $space-5;
+}
+
+.admin-page .stat-card {
+  background: $color-bg-white;
+  padding: 1.75rem;
+  border-radius: $radius-lg;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  @include transition(all);
+  border-left: 4px solid transparent;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  &.stat-card-primary {
+    border-left-color: $color-primary;
+  }
+
+  &.stat-card-success {
+    border-left-color: $color-success;
+  }
+
+  &.stat-card-info {
+    border-left-color: #17a2b8;
+  }
+
+  &.stat-card-warning {
+    border-left-color: $color-warning;
+  }
+
+  &.stat-card-danger {
+    border-left-color: $color-danger;
+  }
+
+  &.stat-card-secondary {
+    border-left-color: #6c757d;
+  }
+}
+
+.stat-icon {
+  font-size: $font-size-3xl;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: $radius-lg;
+
+  .stat-card-primary & {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  }
+
+  .stat-card-success & {
+    background: linear-gradient(135deg, $color-success 0%, #229954 100%);
+  }
+
+  .stat-card-info & {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  }
+
+  .stat-card-warning & {
+    background: linear-gradient(135deg, $color-warning 0%, #e67e22 100%);
+  }
+
+  .stat-card-danger & {
+    background: linear-gradient(135deg, $color-danger 0%, $color-danger-dark 100%);
+  }
+
+  .stat-card-secondary & {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  }
+}
+
+.stat-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.stat-label {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin: 0;
+  font-weight: $font-weight-medium;
+}
+
+.stat-number {
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: $color-text;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.add-admin-form {
+  display: flex;
+  gap: $space-4;
+  margin-bottom: $space-6;
+  padding: $space-5;
+  @include card-base;
+
+  input {
+    flex: 1;
+    padding: $space-3;
+    border: 2px solid $color-border;
+    border-radius: $radius-sm;
+    font-size: $font-size-base;
+    @include transition(border-color);
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+}
+
+.btn-add {
+  padding: $space-3 $space-5;
+  background: $color-success;
+  color: white;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  font-size: $font-size-base;
+  font-weight: 600;
+  @include transition(background-color);
+
+  &:hover {
+    background: #229954;
+  }
+}
+
+.admins-list {
+  @include card-base;
+}
+
+.admins-list h3 {
+  margin-bottom: $space-4;
+  color: $color-text;
+}
+
+.admins-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: $space-4;
+    text-align: left;
+    border-bottom: 1px solid $color-border;
+  }
+
+  th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: $color-text;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+
+  tr:hover {
+    background: #f8f9fa;
+  }
+}
+
+.btn-remove {
+  padding: $space-2 $space-4;
+  background: $color-danger;
+  color: white;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  font-size: $font-size-sm;
+  @include transition(background-color);
+
+  &:hover {
+    background: $color-danger-dark;
+  }
+}
+
+.prices-list {
+  @include card-base;
+  overflow-x: auto;
+}
+
+.prices-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+
+  th, td {
+    padding: $space-4;
+    text-align: left;
+    border-bottom: 1px solid $color-border;
+  }
+
+  th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: $color-text;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+
+  tr:hover {
+    background: #f8f9fa;
+  }
+
+  input[type="number"] {
+    padding: $space-2;
+    border: 2px solid $color-border;
+    border-radius: $radius-sm;
+    font-size: $font-size-base;
+    width: 150px;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+}
+
+.btn-edit, .btn-save, .btn-cancel {
+  padding: $space-2 $space-4;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  font-size: $font-size-sm;
+  margin-right: $space-2;
+  @include transition(background-color);
+}
+
+.btn-edit {
+  background: $color-primary;
+  color: white;
+
+  &:hover {
+    background: $color-primary-dark;
+  }
+}
+
+.btn-save {
+  background: $color-success;
+  color: white;
+
+  &:hover {
+    background: #229954;
+  }
+}
+
+.btn-cancel {
+  background: $color-text-light;
+  color: white;
+
+  &:hover {
+    background: $color-text-muted;
+  }
+}
+
+.admin-quick-links {
+  margin: $space-6 0;
+  padding: $space-4;
+  background: #f8f9fa;
+  border-radius: $radius-md;
+  display: flex;
+  gap: $space-4;
+  flex-wrap: wrap;
+}
+
+.quick-link {
+  display: inline-block;
+  padding: $space-3 $space-5;
+  background: $color-primary;
+  color: white;
+  text-decoration: none;
+  border-radius: $radius-sm;
+  @include transition(background);
+
+  &:hover {
+    background: $color-primary-dark;
+  }
+}
+
+.top-models-section {
+  @include card-base;
+}
+
+.top-models-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: $space-4;
+
+  th, td {
+    padding: $space-3;
+    text-align: left;
+    border-bottom: 1px solid $color-border;
+  }
+
+  th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: $color-text;
+  }
+}
+
+.settings-section {
+  @include card-base;
+}
+
+.setting-item {
+  margin-bottom: $space-6;
+  padding-bottom: $space-6;
+  border-bottom: 1px solid $color-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  h3 {
+    margin-bottom: $space-4;
+    color: $color-text;
+  }
+}
+
+.edit-start-message textarea,
+.start-message-input {
+  width: 100%;
+  padding: $space-3;
+  border: 2px solid $color-border;
+  border-radius: $radius-sm;
+  font-size: $font-size-base;
+  font-family: inherit;
+  resize: vertical;
+  margin-bottom: $space-4;
+}
+
+.view-start-message {
+  background: #f8f9fa;
+  padding: $space-4;
+  border-radius: $radius-sm;
+  margin-bottom: $space-4;
+}
+
+.start-message-preview {
+  white-space: pre-wrap;
+  line-height: $line-height-relaxed;
+  color: #333;
+}
+
+.setting-actions {
+  display: flex;
+  gap: $space-4;
+}
+
+@include mobile {
+  .admin-page {
+    padding: $space-4;
+  }
+
+  .admin-tabs {
+    flex-direction: column;
+
+    button {
+      text-align: left;
+    }
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: $space-4;
+  }
+
+  .stat-card {
+    padding: $space-5;
+    gap: $space-4;
+  }
+
+  .stat-icon {
+    font-size: $font-size-2xl;
+    width: 60px;
+    height: 60px;
+  }
+
+  .stat-number {
+    font-size: 2.25rem;
+  }
+
+  .stats-group-title {
+    font-size: 1.1rem;
+  }
+
+  .add-admin-form {
+    flex-direction: column;
+  }
+
+  .admins-table, .prices-table {
+    font-size: $font-size-sm;
+  }
+
+  .admins-table th, .admins-table td,
+  .prices-table th, .prices-table td {
+    padding: $space-3 $space-2;
+  }
+}

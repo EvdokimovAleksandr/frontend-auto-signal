@@ -1,10 +1,11 @@
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '../../utils/hooks'
-import { getBrandsRequest } from '../../store/cars/carsSlice'
-import './HomePage.css'
+import { useAppDispatch, useAppSelector } from '@/utils/hooks'
+import { getBrandsRequest } from '@/store/cars/carsSlice'
+import { StatCard, LoadingSpinner, ErrorMessage } from '@/components/ui'
+import './HomePage.scss'
 
-const HomePage = () => {
+const HomePage = memo(() => {
   const dispatch = useAppDispatch()
   const { brands, loading, error: carsError } = useAppSelector((state) => state.cars)
   const { isAuthenticated, isPremium, isAdmin } = useAppSelector((state) => state.auth)
@@ -19,7 +20,7 @@ const HomePage = () => {
         <h1>🚗 Добро пожаловать в Auto Signal</h1>
         <p className="subtitle">Система управления автомобильными данными</p>
         <p className="description">
-          Этот бот помогает подобрать и получить информацию о сигнализациях для автомобилей.
+          Сервис помогает подобрать и получить информацию о сигнализациях для автомобилей.
           <br />
           🔎 Выбирай марку → модель → год → и получай нужные файлы.
           <br />
@@ -32,7 +33,7 @@ const HomePage = () => {
       </div>
 
       <div className="actions-section">
-        <Link to="/cars" className="action-card primary">
+        <Link to="/cars" className="action-card action-card--primary">
           <div className="action-icon">🔍</div>
           <h3>Найти авто</h3>
           <p>Выберите марку, модель и год для получения файлов</p>
@@ -47,7 +48,7 @@ const HomePage = () => {
             </Link>
 
             {isAdmin && (
-              <Link to="/admin" className="action-card admin">
+              <Link to="/admin" className="action-card action-card--admin">
                 <div className="action-icon">🛠️</div>
                 <h3>Админ панель</h3>
                 <p>Управление системой и контентом</p>
@@ -66,23 +67,22 @@ const HomePage = () => {
       </div>
 
       {loading ? (
-        <p>Загрузка статистики...</p>
+        <LoadingSpinner />
       ) : carsError ? (
-        <div className="error-message">
-          <p>❌ Ошибка загрузки данных: {carsError}</p>
-          <p>Проверьте, что backend сервер запущен на http://localhost:8000</p>
-        </div>
+        <ErrorMessage
+          message={`Ошибка загрузки данных: ${carsError}`}
+          details="Проверьте, что backend сервер запущен на http://localhost:8000"
+        />
       ) : (
         <div className="stats-section">
-          <div className="stat-card">
-            <h3>Марок автомобилей</h3>
-            <p className="stat-number">{brands.length}</p>
-          </div>
+          <StatCard title="Марок автомобилей" value={brands.length} />
         </div>
       )}
     </div>
   )
-}
+})
+
+HomePage.displayName = 'HomePage'
 
 export default HomePage
 

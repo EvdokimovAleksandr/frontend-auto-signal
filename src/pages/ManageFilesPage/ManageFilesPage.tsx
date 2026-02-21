@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../../utils/hooks'
+import { useAppDispatch, useAppSelector } from '@/utils/hooks'
 import { 
   getBrandsRequest, 
   getModelsRequest, 
@@ -7,9 +7,10 @@ import {
   selectBrand,
   selectModel,
   clearSelections
-} from '../../store/cars/carsSlice'
-import { filesService } from '../../services/filesService'
-import './ManageFilesPage.css'
+} from '@/store/cars/carsSlice'
+import { filesService } from '@/services/filesService'
+import { logger } from '@/utils/logger'
+import './ManageFilesPage.scss'
 
 const ManageFilesPage = () => {
   const dispatch = useAppDispatch()
@@ -18,9 +19,12 @@ const ManageFilesPage = () => {
   
   const [selectedYear, setSelectedYear] = useState<any>(null)
   const [fileType, setFileType] = useState<'photo' | 'premium_photo' | 'pdf' | 'premium_pdf'>('photo')
+  const [inputMode, setInputMode] = useState<'link' | 'upload'>('link')
   const [googleDriveUrl, setGoogleDriveUrl] = useState('')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [filesForDeletion, setFilesForDeletion] = useState<any[]>([])
   const [showDeleteMode, setShowDeleteMode] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     dispatch(getBrandsRequest())
@@ -44,6 +48,10 @@ const ManageFilesPage = () => {
     }
   }, [selectedYear, fileType, showDeleteMode])
 
+  useEffect(() => {
+    setSelectedFile(null)
+  }, [fileType, inputMode])
+
   if (!isAdmin) {
     return (
       <div className="manage-files-page">
@@ -61,39 +69,73 @@ const ManageFilesPage = () => {
       const files = await filesService.getFilesForPreview(selectedYear.id, fileType)
       setFilesForDeletion(files)
     } catch (error) {
-      console.error('Ошибка загрузки файлов:', error)
+      logger.error('Ошибка загрузки файлов:', error)
     }
   }
 
   const handleAddFile = async () => {
-    if (!googleDriveUrl.trim() || !selectedYear) {
-      alert('Заполните все поля')
+    if (!selectedYear) {
+      alert('Выберите год выпуска')
       return
     }
 
+    const hasLink = inputMode === 'link' && googleDriveUrl.trim()
+    const hasFile = inputMode === 'upload' && selectedFile
+
+    if (!hasLink && !hasFile) {
+      alert(inputMode === 'link' ? 'Вставьте ссылку на файл' : 'Выберите файл для загрузки')
+      return
+    }
+
+    const isPhoto = fileType === 'photo' || fileType === 'premium_photo'
+    const isPdf = fileType === 'pdf' || fileType === 'premium_pdf'
+
+    if (selectedFile) {
+      if (isPhoto && !selectedFile.type.startsWith('image/')) {
+        alert('Выберите изображение (JPEG, PNG, GIF, WebP)')
+        return
+      }
+      if (isPdf && selectedFile.type !== 'application/pdf') {
+        alert('Выберите PDF файл')
+        return
+      }
+      if (isPhoto && selectedFile.size > 10 * 1024 * 1024) {
+        alert('Размер изображения не должен превышать 10 МБ')
+        return
+      }
+      if (isPdf && selectedFile.size > 50 * 1024 * 1024) {
+        alert('Размер PDF не должен превышать 50 МБ')
+        return
+      }
+    }
+
+    setIsSubmitting(true)
     try {
-      let result
+      const payload = inputMode === 'link' ? googleDriveUrl.trim() : selectedFile!
       switch (fileType) {
         case 'photo':
-          result = await filesService.addPhoto(googleDriveUrl.trim(), selectedYear.id)
+          await filesService.addPhoto(payload, selectedYear.id)
           break
         case 'premium_photo':
-          result = await filesService.addPremiumPhoto(googleDriveUrl.trim(), selectedYear.id)
+          await filesService.addPremiumPhoto(payload, selectedYear.id)
           break
         case 'pdf':
-          result = await filesService.addPdf(googleDriveUrl.trim(), selectedYear.id)
+          await filesService.addPdf(payload, selectedYear.id)
           break
         case 'premium_pdf':
-          result = await filesService.addPremiumPdf(googleDriveUrl.trim(), selectedYear.id)
+          await filesService.addPremiumPdf(payload, selectedYear.id)
           break
       }
       alert('Файл успешно добавлен')
       setGoogleDriveUrl('')
+      setSelectedFile(null)
       if (showDeleteMode) {
         loadFilesForDeletion()
       }
     } catch (error: any) {
       alert(error.response?.data?.error || 'Ошибка при добавлении файла')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -266,16 +308,58 @@ const ManageFilesPage = () => {
           {!showDeleteMode ? (
             <div className="add-file-form">
               <h3>Добавить {getFileTypeLabel()}</h3>
-              <p>Вставьте ссылку на файл в Google Drive:</p>
-              <input
-                type="text"
-                value={googleDriveUrl}
-                onChange={(e) => setGoogleDriveUrl(e.target.value)}
-                placeholder="https://drive.google.com/file/d/..."
-                className="input-text"
-              />
-              <button onClick={handleAddFile} className="btn-submit">
-                ➕ Добавить файл
+
+              <div className="input-mode-tabs">
+                <button
+                  type="button"
+                  className={inputMode === 'link' ? 'active' : ''}
+                  onClick={() => { setInputMode('link'); setSelectedFile(null) }}
+                >
+                  🔗 Ссылка
+                </button>
+                <button
+                  type="button"
+                  className={inputMode === 'upload' ? 'active' : ''}
+                  onClick={() => { setInputMode('upload'); setGoogleDriveUrl('') }}
+                >
+                  📤 Загрузить файл
+                </button>
+              </div>
+
+              {inputMode === 'link' ? (
+                <>
+                  <p>Вставьте ссылку (Google Drive или прямая ссылка на файл):</p>
+                  <input
+                    type="text"
+                    value={googleDriveUrl}
+                    onChange={(e) => setGoogleDriveUrl(e.target.value)}
+                    placeholder="https://drive.google.com/file/d/... или https://..."
+                    className="input-text"
+                  />
+                </>
+              ) : (
+                <>
+                  <p>Выберите файл для загрузки:</p>
+                  <input
+                    type="file"
+                    accept={fileType === 'photo' || fileType === 'premium_photo'
+                      ? 'image/jpeg,image/png,image/gif,image/webp'
+                      : 'application/pdf'}
+                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    className="input-file"
+                  />
+                  {selectedFile && (
+                    <p className="selected-file-name">Выбран: {selectedFile.name}</p>
+                  )}
+                </>
+              )}
+
+              <button
+                onClick={handleAddFile}
+                className="btn-submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Отправка...' : '➕ Добавить файл'}
               </button>
             </div>
           ) : (
@@ -310,4 +394,6 @@ const ManageFilesPage = () => {
 }
 
 export default ManageFilesPage
+
+
 

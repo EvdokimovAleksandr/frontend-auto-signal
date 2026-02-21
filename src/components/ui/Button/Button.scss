@@ -1,0 +1,76 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2 $space-4;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  @include transition(all);
+  font-family: inherit;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &--full {
+    width: 100%;
+  }
+
+  &--primary {
+    background: $color-primary;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: $color-primary-dark;
+    }
+  }
+
+  &--secondary {
+    background: $color-secondary;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: $color-secondary-light;
+    }
+  }
+
+  &--danger {
+    background: $color-danger;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: $color-danger-dark;
+    }
+  }
+
+  &--outline {
+    background: transparent;
+    border: 2px solid $color-primary;
+    color: $color-primary;
+
+    &:hover:not(:disabled) {
+      background: $color-primary;
+      color: white;
+    }
+  }
+
+  &--ghost {
+    background: $color-text-muted;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: $color-text-light;
+    }
+  }
+}

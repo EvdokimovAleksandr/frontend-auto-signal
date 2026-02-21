@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { FilesByYearResponse } from '../../types'
+import type { FilesByYearResponse } from '@/types'
 
 interface FilesState {
   filesByYear: FilesByYearResponse | null
@@ -43,6 +43,8 @@ export const {
 } = filesSlice.actions
 
 export default filesSlice.reducer
+
+
 
 
 

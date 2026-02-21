@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../../utils/hooks'
+import { useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '@/utils/hooks'
 import { 
   getPricesRequest, 
   getUserSubscriptionRequest,
   createSubscriptionRequest,
   deleteSubscriptionRequest
-} from '../../store/subscription/subscriptionSlice'
-import { subscriptionService } from '../../services/subscriptionService'
-import './SubscriptionsPage.css'
+} from '@/store/subscription/subscriptionSlice'
+import { LoadingSpinner } from '@/components/ui'
+import './SubscriptionsPage.scss'
 
 const SubscriptionsPage = () => {
   const dispatch = useAppDispatch()
@@ -94,20 +94,19 @@ const SubscriptionsPage = () => {
             <li>🔓 Доступ к эксклюзивным фото</li>
             <li>📦 Расширенные материалы по сигнализациям</li>
             <li>📁 Файлы, недоступные обычным пользователям</li>
-            <li>🎯 Всё — сразу в боте, без лишних запросов</li>
+            <li>🎯 Всё — сразу на сайте, без лишних запросов</li>
           </ul>
         </div>
       )}
       
       {loading ? (
-        <p>Загрузка...</p>
+        <LoadingSpinner />
       ) : (
         <div className="prices-list">
           <h2>⏳ Выберите период подписки:</h2>
           {prices.length > 0 ? (
             prices.map((price) => {
-              const priceKopecks = price.price_kopecks || (price.price_rub ? Math.round(price.price_rub * 100) : 0)
-              const priceRub = price.price_rub || (price.price_kopecks ? price.price_kopecks / 100 : 0)
+              const priceRub = price.price_rub ?? (price.price_kopecks ? price.price_kopecks / 100 : 0)
               
               return (
                 <div key={price.period_months} className="price-card">

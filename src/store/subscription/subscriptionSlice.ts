@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { Subscription, SubscriptionPrice } from '../../types'
+import type { Subscription, SubscriptionPrice } from '@/types'
 
 interface SubscriptionState {
   prices: SubscriptionPrice[]

@@ -1,6 +1,6 @@
 import apiClient from './api'
-import { API_ENDPOINTS } from '../config/api'
-import type { User, RegisterUserRequest, UpdateUserRequest, PaginatedResponse } from '../types'
+import { API_ENDPOINTS } from '@/config/api'
+import type { User, RegisterUserRequest, UpdateUserRequest, PaginatedResponse } from '@/types'
 
 export const usersService = {
   // Регистрация пользователя
@@ -27,6 +27,8 @@ export const usersService = {
     return response.data
   },
 }
+
+
 
 
 

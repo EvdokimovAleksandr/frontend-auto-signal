@@ -12,17 +12,8 @@ import {
   getDetailedStatsRequest,
   getDetailedStatsSuccess,
   getDetailedStatsFailure,
-  getTopModelsRequest,
-  getTopModelsSuccess,
-  getTopModelsFailure,
-  getSettingsRequest,
-  getSettingsSuccess,
-  getSettingsFailure,
-  updateStartMessageRequest,
-  updateStartMessageSuccess,
-  updateStartMessageFailure,
 } from './adminSlice'
-import { adminService } from '../../services/adminService'
+import { adminService } from '@/services/adminService'
 
 function* getStatsSaga() {
   try {
@@ -60,41 +51,11 @@ function* getDetailedStatsSaga() {
   }
 }
 
-function* getTopModelsSaga() {
-  try {
-    const topModels = yield call(adminService.getTopModels)
-    yield put(getTopModelsSuccess(topModels))
-  } catch (error: any) {
-    yield put(getTopModelsFailure(error.response?.data?.error || error.message))
-  }
-}
-
-function* getSettingsSaga() {
-  try {
-    const settings = yield call(adminService.getSettings)
-    yield put(getSettingsSuccess(settings))
-  } catch (error: any) {
-    yield put(getSettingsFailure(error.response?.data?.error || error.message))
-  }
-}
-
-function* updateStartMessageSaga(action: any) {
-  try {
-    const setting = yield call(adminService.updateStartMessage, action.payload)
-    yield put(updateStartMessageSuccess(setting))
-  } catch (error: any) {
-    yield put(updateStartMessageFailure(error.response?.data?.error || error.message))
-  }
-}
-
 export default function* adminSaga() {
   yield takeEvery(getStatsRequest.type, getStatsSaga)
   yield takeEvery(getAdminsRequest.type, getAdminsSaga)
   yield takeEvery(getPricesRequest.type, getPricesSaga)
   yield takeEvery(getDetailedStatsRequest.type, getDetailedStatsSaga)
-  yield takeEvery(getTopModelsRequest.type, getTopModelsSaga)
-  yield takeEvery(getSettingsRequest.type, getSettingsSaga)
-  yield takeEvery(updateStartMessageRequest.type, updateStartMessageSaga)
 }
 
 

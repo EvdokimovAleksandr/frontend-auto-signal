@@ -4,7 +4,7 @@ import {
   getFilesByYearSuccess,
   getFilesByYearFailure,
 } from './filesSlice'
-import { filesService } from '../../services/filesService'
+import { filesService } from '@/services/filesService'
 
 function* getFilesByYearSaga(action: ReturnType<typeof getFilesByYearRequest>) {
   try {
@@ -18,6 +18,8 @@ function* getFilesByYearSaga(action: ReturnType<typeof getFilesByYearRequest>) {
 export default function* filesSaga() {
   yield takeEvery(getFilesByYearRequest.type, getFilesByYearSaga)
 }
+
+
 
 
 

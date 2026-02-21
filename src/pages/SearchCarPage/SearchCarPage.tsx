@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../../utils/hooks'
+import { useAppDispatch, useAppSelector } from '@/utils/hooks'
 import { 
   getBrandsRequest, 
   getModelsRequest, 
@@ -8,28 +8,22 @@ import {
   selectModel, 
   clearSelections,
   clearModel
-} from '../../store/cars/carsSlice'
-import { carsService } from '../../services/carsService'
-import { getFilesByYearRequest } from '../../store/files/filesSlice'
-import { API_BASE_URL } from '../../config/api'
-import './SearchCarPage.css'
+} from '@/store/cars/carsSlice'
+import { carsService } from '@/services/carsService'
+import { getFilesByYearRequest } from '@/store/files/filesSlice'
+import { API_BASE_URL, API_SERVER_URL } from '@/config/api'
+import type { Brand, Model, Year } from '@/types'
+import { logger } from '@/utils/logger'
+import './SearchCarPage.scss'
 
-// Вспомогательная функция для нормализации URL изображения
-const getImageUrl = (photoUrl: string | null | undefined): string => {
-  if (!photoUrl) return '';
-  
-  // Если это относительный путь (начинается с /), добавляем базовый URL
-  if (photoUrl.startsWith('/')) {
-    return `${API_BASE_URL}${photoUrl}`;
-  }
-  
-  // Если это уже полный URL, возвращаем как есть
-  if (photoUrl.startsWith('http://') || photoUrl.startsWith('https://')) {
-    return photoUrl;
-  }
-  
-  // Иначе считаем, что это относительный путь
-  return `${API_BASE_URL}/${photoUrl}`;
+/** Преобразует путь к файлу в полный URL (изображения, PDF). */
+const getFileUrl = (url: string | null | undefined): string => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  // /uploads/ — статика на корне бэкенда; /files/ — API routes под /api/files
+  if (url.startsWith('/uploads/')) return `${API_SERVER_URL}${url}`;
+  if (url.startsWith('/')) return `${API_BASE_URL}${url}`;
+  return `${API_SERVER_URL}/${url}`;
 }
 
 const SearchCarPage = () => {
@@ -39,7 +33,7 @@ const SearchCarPage = () => {
   const { user, isPremium } = useAppSelector((state) => state.auth)
   
   const [currentStep, setCurrentStep] = useState<'brand' | 'model' | 'year' | 'files'>('brand')
-  const [selectedYear, setSelectedYear] = useState<any>(null)
+  const [selectedYear, setSelectedYear] = useState<{ id: number; value: string } | null>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<{brands: typeof brands, models: typeof models, years: typeof years}>({brands: [], models: [], years: []})
@@ -87,7 +81,7 @@ const SearchCarPage = () => {
     }
   }
 
-  const handleYearSelect = async (year: any) => {
+  const handleYearSelect = async (year: { id: number; value: string }) => {
     setSelectedYear(year)
     setCurrentStep('files')
     dispatch(getFilesByYearRequest({ yearId: year.id, userId: user?.user_id }))
@@ -112,45 +106,42 @@ const SearchCarPage = () => {
         years: yearsResult,
       })
     } catch (error) {
-      console.error('Ошибка поиска:', error)
+      logger.error('Ошибка поиска:', error)
     }
   }
 
-  const handleSearchResultClick = async (type: 'brand' | 'model' | 'year', item: any) => {
+  const handleSearchResultClick = async (type: 'brand' | 'model' | 'year', item: Brand | Model | Year) => {
     if (type === 'brand') {
-      dispatch(selectBrand(item))
+      dispatch(selectBrand(item as Brand))
       setSearchQuery('')
       setSearchResults({ brands: [], models: [], years: [] })
     } else if (type === 'model') {
-      // Нужно получить brand_id для модели - загружаем бренды если их нет
-      let brand = brands.find(b => b.id === item.brand_id)
-      if (!brand && item.brand_id) {
-        // Если бренд не найден, загружаем все бренды и ищем
+      const modelItem = item as Model
+      let brand = brands.find(b => b.id === modelItem.brand_id)
+      if (!brand && modelItem.brand_id) {
         await dispatch(getBrandsRequest())
-        // Ждем обновления состояния
         await new Promise(resolve => setTimeout(resolve, 200))
         const updatedBrands = brands.length > 0 ? brands : []
-        brand = updatedBrands.find((b: any) => b.id === item.brand_id)
+        brand = updatedBrands.find((b) => b.id === modelItem.brand_id)
       }
       if (brand) {
         dispatch(selectBrand(brand))
         await new Promise(resolve => setTimeout(resolve, 200))
-        dispatch(selectModel(item))
+        dispatch(selectModel(item as Model))
         setSearchQuery('')
         setSearchResults({ brands: [], models: [], years: [] })
       } else {
         alert('Не удалось найти марку для этой модели')
       }
     } else if (type === 'year') {
-      // Нужно получить model_id и brand_id для года
-      let model = models.find(m => m.id === item.model_id)
-      if (!model && item.model_id) {
-        // Загружаем модели для поиска
+      const yearItem = item as Year
+      let model = models.find(m => m.id === yearItem.model_id)
+      if (!model && yearItem.model_id) {
         if (selectedBrand) {
           await dispatch(getModelsRequest(selectedBrand.id))
           await new Promise(resolve => setTimeout(resolve, 200))
           const updatedModels = models.length > 0 ? models : []
-          model = updatedModels.find((m: any) => m.id === item.model_id)
+          model = updatedModels.find((m) => m.id === yearItem.model_id)
         }
       }
       if (model) {
@@ -166,7 +157,7 @@ const SearchCarPage = () => {
           await new Promise(resolve => setTimeout(resolve, 200))
           dispatch(selectModel(model))
           await new Promise(resolve => setTimeout(resolve, 200))
-          handleYearSelect(item)
+          handleYearSelect(item as Year)
           setSearchQuery('')
           setSearchResults({ brands: [], models: [], years: [] })
         } else {
@@ -355,22 +346,14 @@ const SearchCarPage = () => {
                   {file.photo && (
                     <div className="file-item">
                       <img 
-                        src={getImageUrl(file.photo)} 
+                        src={getFileUrl(file.photo)} 
                         alt="Photo" 
                         className="file-preview clickable"
-                        onClick={() => setSelectedImage(getImageUrl(file.photo))}
+                        onClick={() => setSelectedImage(getFileUrl(file.photo))}
                         onError={(e) => {
                           const img = e.target as HTMLImageElement;
-                          console.error('Ошибка загрузки изображения:', {
-                            src: img.src,
-                            original: file.photo,
-                            fileId: file.id,
-                            computedUrl: getImageUrl(file.photo)
-                          });
-                          img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EИзображение не загружено%3C/text%3E%3C/svg%3E';
-                        }}
-                        onLoad={() => {
-                          console.log('✅ Изображение успешно загружено:', file.photo);
+                          logger.error('Ошибка загрузки изображения:', { src: img.src, fileId: file.id })
+                          img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EИзображение не загружено%3C/text%3E%3C/svg%3E'
                         }}
                       />
                       <p className="file-type">📷 Фото</p>
@@ -381,21 +364,14 @@ const SearchCarPage = () => {
                       {isPremium ? (
                         <>
                           <img 
-                            src={getImageUrl(file.premium_photo)} 
+                            src={getFileUrl(file.premium_photo)} 
                             alt="Premium Photo" 
                             className="file-preview clickable"
-                            onClick={() => setSelectedImage(getImageUrl(file.premium_photo))}
+                            onClick={() => setSelectedImage(getFileUrl(file.premium_photo))}
                             onError={(e) => {
                               const img = e.target as HTMLImageElement;
-                              console.error('Ошибка загрузки премиум изображения:', {
-                                src: img.src,
-                                original: file.premium_photo,
-                                fileId: file.id
-                              });
-                              img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EИзображение не загружено%3C/text%3E%3C/svg%3E';
-                            }}
-                            onLoad={() => {
-                              console.log('✅ Премиум изображение успешно загружено:', file.premium_photo);
+                              logger.error('Ошибка загрузки премиум изображения:', { src: img.src, fileId: file.id })
+                              img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EИзображение не загружено%3C/text%3E%3C/svg%3E'
                             }}
                           />
                           <p className="file-type">💎 Премиум фото</p>
@@ -411,7 +387,7 @@ const SearchCarPage = () => {
                   )}
                   {file.pdf && (
                     <div className="file-item">
-                      <a href={file.pdf} target="_blank" rel="noopener noreferrer" className="file-link">
+                      <a href={getFileUrl(file.pdf)} target="_blank" rel="noopener noreferrer" className="file-link">
                         📄 PDF файл
                       </a>
                     </div>
@@ -419,7 +395,7 @@ const SearchCarPage = () => {
                   {file.premium_pdf && (
                     <div className={`file-item premium ${!isPremium ? 'locked' : ''}`}>
                       {isPremium ? (
-                        <a href={file.premium_pdf} target="_blank" rel="noopener noreferrer" className="file-link">
+                        <a href={getFileUrl(file.premium_pdf)} target="_blank" rel="noopener noreferrer" className="file-link">
                           💎 Премиум PDF
                         </a>
                       ) : (
@@ -445,19 +421,13 @@ const SearchCarPage = () => {
               <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
                 <button className="modal-close" onClick={() => setSelectedImage(null)}>×</button>
                 <img 
-                  src={selectedImage.startsWith('/') ? `${API_BASE_URL}${selectedImage}` : selectedImage.startsWith('http') ? selectedImage : `${API_BASE_URL}/${selectedImage}`} 
+                  src={getFileUrl(selectedImage) || selectedImage} 
                   alt="Preview" 
                   className="modal-image"
                   onError={(e) => {
                     const img = e.target as HTMLImageElement;
-                    console.error('Ошибка загрузки изображения в модальном окне:', {
-                      src: img.src,
-                      original: selectedImage
-                    });
-                    img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23ddd" width="400" height="400"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="16" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EИзображение не загружено%3C/text%3E%3C/svg%3E';
-                  }}
-                  onLoad={() => {
-                    console.log('✅ Изображение в модальном окне загружено');
+                    logger.error('Ошибка загрузки изображения в модальном окне:', img.src)
+                    img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23ddd" width="400" height="400"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="16" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EИзображение не загружено%3C/text%3E%3C/svg%3E'
                   }}
                 />
               </div>

@@ -1,9 +1,12 @@
 import { useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from '../../utils/hooks'
-import { getUsersRequest } from '../../store/users/usersSlice'
-import './UsersPage.css'
+import { memo } from 'react'
+import { useAppDispatch, useAppSelector } from '@/utils/hooks'
+import { getUsersRequest } from '@/store/users/usersSlice'
+import { getDisplayName } from '@/utils/user'
+import { LoadingSpinner } from '@/components/ui'
+import './UsersPage.scss'
 
-const UsersPage = () => {
+const UsersPage = memo(() => {
   const dispatch = useAppDispatch()
   const { users, loading, pagination } = useAppSelector((state) => state.users)
 
@@ -16,13 +19,13 @@ const UsersPage = () => {
       <h1>Пользователи</h1>
       
       {loading ? (
-        <p>Загрузка...</p>
+        <LoadingSpinner />
       ) : (
         <>
           <div className="users-list">
             {users.map((user) => (
-              <div key={user.id} className="user-card">
-                <h3>{user.name || user.username || `User ${user.user_id}`}</h3>
+              <div key={user.user_id} className="user-card">
+                <h3>{getDisplayName(user)}</h3>
                 <p>ID: {user.user_id}</p>
                 {user.username && <p>Username: @{user.username}</p>}
               </div>
@@ -40,9 +43,13 @@ const UsersPage = () => {
       )}
     </div>
   )
-}
+})
+
+UsersPage.displayName = 'UsersPage'
 
 export default UsersPage
+
+
 
 
 

@@ -10,7 +10,7 @@ import {
   getYearsSuccess,
   getYearsFailure,
 } from './carsSlice'
-import { carsService } from '../../services/carsService'
+import { carsService } from '@/services/carsService'
 
 function* getBrandsSaga() {
   try {

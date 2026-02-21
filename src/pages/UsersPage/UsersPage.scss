@@ -1,0 +1,33 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.users-page h1 {
+  margin-bottom: $space-6;
+  color: $color-text;
+}
+
+.users-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $space-5;
+  margin-bottom: $space-6;
+}
+
+.user-card {
+  @include card-base;
+}
+
+.user-card h3 {
+  margin-bottom: $space-2;
+  color: $color-text;
+}
+
+.user-card p {
+  color: $color-text-muted;
+  margin: $space-1 0;
+}
+
+.pagination {
+  text-align: center;
+  color: $color-text-muted;
+}

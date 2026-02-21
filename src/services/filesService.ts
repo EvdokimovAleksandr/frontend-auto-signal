@@ -1,6 +1,6 @@
 import apiClient from './api'
-import { API_ENDPOINTS } from '../config/api'
-import type { FilesByYearResponse, FileForDescription, Brand, Model, Year } from '../types'
+import { API_ENDPOINTS } from '@/config/api'
+import type { FilesByYearResponse, FileForDescription, Brand, Model, Year } from '@/types'
 
 export const filesService = {
   // Получить файлы по году
@@ -67,10 +67,17 @@ export const filesService = {
     return response.data
   },
 
-  // Добавить фото
-  addPhoto: async (googleDriveUrl: string, yearId: number): Promise<any> => {
+  // Добавить фото (ссылка или файл)
+  addPhoto: async (urlOrFile: string | File, yearId: number): Promise<any> => {
+    if (urlOrFile instanceof File) {
+      const formData = new FormData()
+      formData.append('file', urlOrFile)
+      formData.append('yearId', String(yearId))
+      const response = await apiClient.post(API_ENDPOINTS.FILES_ADD_PHOTO, formData)
+      return response.data
+    }
     const response = await apiClient.post(API_ENDPOINTS.FILES_ADD_PHOTO, {
-      googleDriveUrl,
+      googleDriveUrl: urlOrFile,
       yearId,
     })
     return response.data
@@ -81,10 +88,17 @@ export const filesService = {
     await apiClient.delete(API_ENDPOINTS.FILES_DELETE_PHOTO(fileId))
   },
 
-  // Добавить премиум фото
-  addPremiumPhoto: async (googleDriveUrl: string, yearId: number): Promise<any> => {
+  // Добавить премиум фото (ссылка или файл)
+  addPremiumPhoto: async (urlOrFile: string | File, yearId: number): Promise<any> => {
+    if (urlOrFile instanceof File) {
+      const formData = new FormData()
+      formData.append('file', urlOrFile)
+      formData.append('yearId', String(yearId))
+      const response = await apiClient.post(API_ENDPOINTS.FILES_ADD_PREMIUM_PHOTO, formData)
+      return response.data
+    }
     const response = await apiClient.post(API_ENDPOINTS.FILES_ADD_PREMIUM_PHOTO, {
-      googleDriveUrl,
+      googleDriveUrl: urlOrFile,
       yearId,
     })
     return response.data
@@ -95,10 +109,17 @@ export const filesService = {
     await apiClient.delete(API_ENDPOINTS.FILES_DELETE_PREMIUM_PHOTO(fileId))
   },
 
-  // Добавить PDF
-  addPdf: async (googleDriveUrl: string, yearId: number): Promise<any> => {
+  // Добавить PDF (ссылка или файл)
+  addPdf: async (urlOrFile: string | File, yearId: number): Promise<any> => {
+    if (urlOrFile instanceof File) {
+      const formData = new FormData()
+      formData.append('file', urlOrFile)
+      formData.append('yearId', String(yearId))
+      const response = await apiClient.post(API_ENDPOINTS.FILES_ADD_PDF, formData)
+      return response.data
+    }
     const response = await apiClient.post(API_ENDPOINTS.FILES_ADD_PDF, {
-      googleDriveUrl,
+      googleDriveUrl: urlOrFile,
       yearId,
     })
     return response.data
@@ -109,10 +130,17 @@ export const filesService = {
     await apiClient.delete(API_ENDPOINTS.FILES_DELETE_PDF(fileId))
   },
 
-  // Добавить премиум PDF
-  addPremiumPdf: async (googleDriveUrl: string, yearId: number): Promise<any> => {
+  // Добавить премиум PDF (ссылка или файл)
+  addPremiumPdf: async (urlOrFile: string | File, yearId: number): Promise<any> => {
+    if (urlOrFile instanceof File) {
+      const formData = new FormData()
+      formData.append('file', urlOrFile)
+      formData.append('yearId', String(yearId))
+      const response = await apiClient.post(API_ENDPOINTS.FILES_ADD_PREMIUM_PDF, formData)
+      return response.data
+    }
     const response = await apiClient.post(API_ENDPOINTS.FILES_ADD_PREMIUM_PDF, {
-      googleDriveUrl,
+      googleDriveUrl: urlOrFile,
       yearId,
     })
     return response.data

@@ -1,14 +1,16 @@
-import { ReactNode } from 'react'
+import { memo, ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAppSelector, useAppDispatch } from '../../utils/hooks'
-import { logout } from '../../store/auth/authSlice'
-import './Layout.css'
+import { useAppSelector, useAppDispatch } from '@/utils/hooks'
+import { logout } from '@/store/auth/authSlice'
+import { getDisplayName } from '@/utils/user'
+import { Button, Badge } from '@/components/ui'
+import './Layout.scss'
 
 interface LayoutProps {
   children: ReactNode
 }
 
-const Layout = ({ children }: LayoutProps) => {
+const Layout = memo(({ children }: LayoutProps) => {
   const { isAuthenticated, user, isAdmin, isPremium } = useAppSelector((state) => state.auth)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -39,12 +41,12 @@ const Layout = ({ children }: LayoutProps) => {
             )}
             {isAuthenticated ? (
               <div className="user-info">
-                {isPremium && <span className="premium-badge">💎 Premium</span>}
-                {isAdmin && <span className="admin-badge">👑 Admin</span>}
-                <span className="user-name">{user?.name || user?.username || `User ${user?.user_id}`}</span>
-                <button onClick={handleLogout} className="btn-logout">
+                {isPremium && <Badge variant="premium">💎 Premium</Badge>}
+                {isAdmin && <Badge variant="admin">👑 Admin</Badge>}
+                <span className="user-name">{getDisplayName(user)}</span>
+                <Button variant="danger" onClick={handleLogout}>
                   Выйти
-                </button>
+                </Button>
               </div>
             ) : (
               <Link to="/login" className="btn-login">Войти</Link>
@@ -62,7 +64,9 @@ const Layout = ({ children }: LayoutProps) => {
       </footer>
     </div>
   )
-}
+})
+
+Layout.displayName = 'Layout'
 
 export default Layout
 

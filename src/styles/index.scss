@@ -1,0 +1,16 @@
+@use 'variables' as *;
+@use 'reset';
+@use 'mixins' as *;
+
+:root {
+  --font-family-base: #{$font-family-base};
+  --color-primary: #{$color-primary};
+  --color-primary-dark: #{$color-primary-dark};
+  --color-secondary: #{$color-secondary};
+  --color-bg: #{$color-bg};
+  --color-text: #{$color-text};
+  --color-text-muted: #{$color-text-muted};
+  --header-height: #{$header-height};
+  --footer-height: #{$footer-height};
+  --container-max-width: #{$container-max-width};
+}

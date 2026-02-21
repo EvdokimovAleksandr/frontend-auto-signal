@@ -2,6 +2,14 @@
 const env = import.meta.env
 export const API_BASE_URL = env.VITE_API_BASE_URL || 'http://localhost:8000/api'
 
+/** Базовый URL бэкенда без /api — для статики (uploads). В dev с proxy используем '' (relative). */
+export const API_SERVER_URL =
+  env.VITE_API_SERVER_URL !== undefined
+    ? env.VITE_API_SERVER_URL
+    : import.meta.env.DEV
+      ? '' // Vite proxy для /uploads → same-origin
+      : (API_BASE_URL.replace(/\/api\/?$/, '') || 'http://localhost:8000')
+
 // Таймауты
 export const API_TIMEOUT = 30000 // 30 секунд
 
@@ -32,11 +40,8 @@ export const API_ENDPOINTS = {
   // Admin
   ADMIN_STATS: '/admin/stats',
   ADMIN_STATS_DETAILED: '/admin/stats/detailed',
-  ADMIN_STATS_TOP_MODELS: '/admin/stats/top-models',
   ADMIN_ADMINS: '/admin/admins',
   ADMIN_PRICES: '/admin/prices',
-  ADMIN_SETTINGS: '/admin/settings',
-  ADMIN_SETTINGS_START_MESSAGE: '/admin/settings/start-message',
   ADMIN_DESCRIPTIONS: '/admin/descriptions',
   
   // Files (admin)
@@ -54,8 +59,5 @@ export const API_ENDPOINTS = {
   FILES_ADD_PREMIUM_PDF: '/files/pdfs/premium',
   FILES_DELETE_PREMIUM_PDF: (fileId: number) => `/files/pdfs/premium/${fileId}`,
   FILES_PREVIEW: (yearId: number, fileType: string) => `/files/years/${yearId}/files/${fileType}/preview`,
-  
-  // Info
-  HELP: '/info/help',
 } as const
 

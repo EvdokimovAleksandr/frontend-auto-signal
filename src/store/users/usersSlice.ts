@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { User } from '../../types'
+import type { User } from '@/types'
 
 interface UsersState {
   users: User[]
@@ -112,6 +112,8 @@ export const {
 } = usersSlice.actions
 
 export default usersSlice.reducer
+
+
 
 
 

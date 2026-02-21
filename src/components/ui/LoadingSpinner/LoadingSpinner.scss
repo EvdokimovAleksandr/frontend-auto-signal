@@ -1,0 +1,44 @@
+@use '@/styles/variables' as *;
+
+.loading-spinner {
+  display: flex;
+  gap: $space-2;
+  justify-content: center;
+  align-items: center;
+  padding: $space-4;
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $color-primary;
+    animation: loading-bounce 1.4s ease-in-out infinite both;
+
+    &:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+  }
+
+  &--sm &__dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  &--lg &__dot {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@keyframes loading-bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}

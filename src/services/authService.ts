@@ -1,5 +1,5 @@
 import apiClient from './api'
-import { API_ENDPOINTS } from '../config/api'
+import { API_ENDPOINTS } from '@/config/api'
 
 export interface LoginRequest {
   userId?: string

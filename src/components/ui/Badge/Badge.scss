@@ -1,0 +1,23 @@
+@use '@/styles/variables' as *;
+
+.badge {
+  padding: $space-1 $space-2;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+
+  &--premium {
+    background-color: $color-premium;
+    color: white;
+  }
+
+  &--admin {
+    background-color: $color-admin;
+    color: white;
+  }
+
+  &--default {
+    background-color: $color-text-muted;
+    color: white;
+  }
+}

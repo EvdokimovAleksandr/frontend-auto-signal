@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { Brand, Model, Year } from '../../types'
+import type { Brand, Model, Year } from '@/types'
 
 interface CarsState {
   brands: Brand[]

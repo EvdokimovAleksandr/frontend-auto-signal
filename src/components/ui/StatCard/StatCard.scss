@@ -1,0 +1,20 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.stat-card {
+  @include card-base;
+  min-width: 200px;
+  text-align: center;
+
+  &__title {
+    font-size: $font-size-base;
+    color: $color-text-muted;
+    margin-bottom: $space-4;
+  }
+
+  &__value {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+  }
+}

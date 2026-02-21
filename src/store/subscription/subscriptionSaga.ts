@@ -13,7 +13,7 @@ import {
   deleteSubscriptionSuccess,
   deleteSubscriptionFailure,
 } from './subscriptionSlice'
-import { subscriptionService } from '../../services/subscriptionService'
+import { subscriptionService } from '@/services/subscriptionService'
 
 function* getPricesSaga() {
   try {

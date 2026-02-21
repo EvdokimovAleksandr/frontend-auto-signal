@@ -1,0 +1,49 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: $color-bg-white;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+  overflow: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-4 $space-5;
+  border-bottom: 1px solid $color-border;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: $font-size-xl;
+  color: $color-text;
+}
+
+.modal-close {
+  min-width: 40px;
+  padding: $space-1;
+  font-size: $font-size-2xl;
+}
+
+.modal-body {
+  padding: $space-5;
+}

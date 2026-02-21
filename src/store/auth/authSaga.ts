@@ -7,7 +7,7 @@ import {
   getCurrentUserSuccess,
   getCurrentUserFailure,
 } from './authSlice'
-import { authService } from '../../services/authService'
+import { authService } from '@/services/authService'
 
 function* loginSaga(action: ReturnType<typeof loginRequest>) {
   try {

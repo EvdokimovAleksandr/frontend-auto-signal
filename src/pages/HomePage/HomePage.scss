@@ -1,0 +1,107 @@
+@use '@/styles/variables' as *;
+@use '@/styles/mixins' as *;
+
+.home-page {
+  max-width: $container-max-width;
+  margin: 0 auto;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: $space-8;
+  padding: $space-6;
+  @include card-base;
+}
+
+.welcome-section h1 {
+  font-size: $font-size-3xl;
+  margin-bottom: $space-4;
+  color: $color-text;
+}
+
+.subtitle {
+  font-size: $font-size-lg;
+  color: $color-text-muted;
+  margin-bottom: $space-4;
+}
+
+.description {
+  font-size: $font-size-base;
+  color: $color-secondary-light;
+  line-height: $line-height-relaxed;
+  text-align: left;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.premium-text {
+  color: $color-premium;
+  font-weight: $font-weight-bold;
+}
+
+.actions-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $space-5;
+  margin-bottom: $space-8;
+}
+
+.action-card {
+  @include card-base;
+  text-decoration: none;
+  color: inherit;
+  @include transition(all);
+  text-align: center;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+    border-color: $color-primary;
+  }
+
+  &--primary {
+    border-color: $color-primary;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+    color: white;
+
+    &:hover {
+      background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary-darker 100%);
+    }
+  }
+
+  &--admin {
+    border-color: $color-admin;
+    background: linear-gradient(135deg, $color-admin 0%, $color-admin-dark 100%);
+    color: white;
+
+    &:hover {
+      background: linear-gradient(135deg, $color-admin-dark 0%, #7d3c98 100%);
+    }
+  }
+}
+
+.action-icon {
+  font-size: $font-size-3xl;
+  margin-bottom: $space-4;
+}
+
+.action-card h3 {
+  font-size: $font-size-xl;
+  margin-bottom: $space-2;
+  color: inherit;
+}
+
+.action-card p {
+  font-size: $font-size-sm;
+  color: inherit;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.stats-section {
+  display: flex;
+  gap: $space-6;
+  justify-content: center;
+  flex-wrap: wrap;
+}

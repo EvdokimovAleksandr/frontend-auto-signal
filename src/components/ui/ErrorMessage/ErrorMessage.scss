@@ -1,0 +1,20 @@
+@use '@/styles/variables' as *;
+
+.error-message {
+  background: $color-error-bg;
+  border: 1px solid $color-error-border;
+  border-radius: $radius-md;
+  padding: $space-5;
+  color: $color-error-text;
+  text-align: center;
+
+  &__text {
+    margin: 0;
+  }
+
+  &__details {
+    margin: $space-2 0 0;
+    font-size: $font-size-sm;
+    opacity: 0.9;
+  }
+}

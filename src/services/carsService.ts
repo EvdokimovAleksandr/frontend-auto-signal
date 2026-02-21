@@ -1,6 +1,6 @@
 import apiClient from './api'
-import { API_ENDPOINTS } from '../config/api'
-import type { Brand, Model, Year } from '../types'
+import { API_ENDPOINTS } from '@/config/api'
+import type { Brand, Model, Year } from '@/types'
 
 export const carsService = {
   // Получить все марки
@@ -67,14 +67,9 @@ export const carsService = {
   },
 
   // Добавить марки (массово)
-  addBrands: async (brands: string[]): Promise<any[]> => {
-    const response = await apiClient.post<any[]>(`${API_ENDPOINTS.BRANDS}/batch`, { brands })
+  addBrandsBatch: async (brands: string[]): Promise<Brand[]> => {
+    const response = await apiClient.post<Brand[]>(`${API_ENDPOINTS.BRANDS}/batch`, { brands })
     return response.data
-  },
-
-  // Удалить марку
-  deleteBrand: async (id: number): Promise<void> => {
-    await apiClient.delete(`${API_ENDPOINTS.BRANDS}/${id}`)
   },
 
   // Удалить марки (массово)
@@ -91,12 +86,6 @@ export const carsService = {
       oldBrand,
       newBrand,
     })
-    return response.data
-  },
-
-  // Добавить модель
-  addModel: async (model: string, brandId: number): Promise<Model> => {
-    const response = await apiClient.post<Model>(API_ENDPOINTS.MODELS, { model, brandId })
     return response.data
   },
 

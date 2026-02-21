@@ -1,6 +1,6 @@
 import apiClient from './api'
-import { API_ENDPOINTS } from '../config/api'
-import type { Subscription, SubscriptionPrice, CreateSubscriptionRequest } from '../types'
+import { API_ENDPOINTS } from '@/config/api'
+import type { Subscription, SubscriptionPrice, CreateSubscriptionRequest } from '@/types'
 
 export const subscriptionService = {
   // Получить цены подписок
@@ -33,6 +33,8 @@ export const subscriptionService = {
     await apiClient.delete(API_ENDPOINTS.USER_SUBSCRIPTION(userId))
   },
 }
+
+
 
 
 
